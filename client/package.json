@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/TiFu/league-coaching-helper#readme",
   "dependencies": {
+    "firebase": "^4.6.1",
     "jquery": "^3.2.1"
   }
 }
