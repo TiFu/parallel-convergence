@@ -1,0 +1,19 @@
+{
+  "name": "league-coaching-helper",
+  "version": "1.0.0",
+  "description": "League of legends drawing overlay to help coaches and players.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TiFu/league-coaching-helper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TiFu/league-coaching-helper/issues"
+  },
+  "homepage": "https://github.com/TiFu/league-coaching-helper#readme"
+}
