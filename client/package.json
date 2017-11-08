@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/TiFu/league-coaching-helper/issues"
   },
-  "homepage": "https://github.com/TiFu/league-coaching-helper#readme"
+  "homepage": "https://github.com/TiFu/league-coaching-helper#readme",
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
 }
