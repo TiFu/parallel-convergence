@@ -1,0 +1,43 @@
+{
+	"manifest_version":1,
+	"type":"LeagueCoach",
+	"meta":{
+		"name":"League Coach",
+		"version":"1.0.0",
+		"minimum-overwolf-version":"0.77.10",
+		"author":"league-coaching-helper-team",
+		"icon":"IconMouseOver.png",
+		"icon_gray":"IconMouseNormal.png",
+		"description":"Sync and annotate replays between PCs"
+	},
+	"data": {
+		"start_window":"MainWindow",
+		"windows":{
+			"MainWindow":{
+					"file":"src/index.html",
+					"transparent": true,
+					"resizable": true,
+					"use_os_windowing": true,
+					"size": {
+						"width":700,
+						"height":400
+						},
+					"min_size": {
+						"width":400,
+						"height":400
+					},
+					"max_size": {
+						"width":800,
+						"height":800
+					}
+				},
+			"SubWindow":{
+					"file":"src/subwindow.html",
+					"transparent":true,
+					"resizable":false,
+					"size":{"width":400, "height":300},
+					"in_game_only":true
+				}
+		}
+	}
+}
