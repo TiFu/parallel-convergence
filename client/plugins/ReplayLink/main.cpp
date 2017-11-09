@@ -21,6 +21,11 @@ namespace replay
 
 	camera_impl::camera_impl()
 	{
+	}
+
+
+	bool camera_impl::connect_to_league()
+	{
 		std::vector<DWORD> t_ProcessList;
 
 		std::wcout << L"Waiting for '" << PROCESS_NAME << L"'." << std::endl;
@@ -35,7 +40,7 @@ namespace replay
 		if (NT_SUCCESS(league_process.Attach(t_ProcessList[0])) == false)
 		{
 			std::wcerr << L"Error trying to open '" << PROCESS_NAME << L"'." << std::endl;
-			return;
+			return false;
 		}
 
 		attached = true;
@@ -51,26 +56,28 @@ namespace replay
 		if (results.size() == 0)
 		{
 			std::cout << "Unable to find the pattern." << std::endl;
-			return;
+			return false;
 		}
 
 		if (league_process.memory().Read<uint32_t>(results[0] + 2, camera_object_address))
 		{
 			std::cout << "Failed to read a part of the pattern." << std::endl;
-			return;
+			return false;
 		}
 
 		if (league_process.memory().Read<uint32_t>(camera_object_address, camera_object_address))
 		{
 			std::cout << "Failed to read in the multiplayer client." << std::endl;
-			return;
+			return false;
 		}
 
 		if (league_process.memory().Read<uint32_t>(camera_object_address + 12, camera_object_address))
 		{
 			std::cout << "Failed to get the camera object." << std::endl;
-			return;
+			return false;
 		}
+
+		return true;
 	}
 
 	vector2 camera_impl::get_position()
@@ -115,6 +122,9 @@ namespace replay
 int main()
 {
 	replay::camera_impl t_camera;
+
+	t_camera.connect_to_league();
+
 	while (true)
 	{
 		auto t_vec = t_camera.get_position();

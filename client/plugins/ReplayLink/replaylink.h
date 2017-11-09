@@ -18,6 +18,8 @@ namespace replay
 		camera() { }
 		virtual ~camera() { }
 
+		virtual bool connect_to_league() = 0;
+
 		virtual vector2 get_position() = 0;
 		virtual void set_position(float x, float y) = 0;
 	};
@@ -27,6 +29,8 @@ namespace replay
 	public:
 		camera_impl();
 		~camera_impl() { }
+
+		bool connect_to_league();
 
 		vector2 get_position();
 		void set_position(float x, float y);
