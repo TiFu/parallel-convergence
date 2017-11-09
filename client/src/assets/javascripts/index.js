@@ -2,7 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import $ from "jquery"
 
-import DrawableCanvas from "components/drawable-canvas"
+import App from "components/app"
 
 
-ReactDOM.render(<DrawableCanvas/>, $("#container")[0])
+ReactDOM.render(<App/>, $("#container")[0])

@@ -13,7 +13,9 @@ const propTypes = {
     backgroundColor: PropTypes.string,
     cursor: PropTypes.string
   }),
-  clear: PropTypes.bool
+  clear: PropTypes.bool,
+  onDrawingChanged: PropTypes.func.isRequired,
+  initialDrawing: PropTypes.string.isRequired,
 }
 
 const defaultProps = {
@@ -58,8 +60,27 @@ class DrawableCanvas extends React.Component {
   }
 
   componentWillReceiveProps = nextProps => {
+    let { canvas } = this.state
+    let { initialDrawing } = this.props
+
     if(nextProps.clear){
       this.resetCanvas()
+    }
+    if (this.props.initialDrawing !== nextProps.initialDrawing && canvas) {
+      let ctx = canvas.getContext('2d');
+      let img = new Image;
+      img.onload = () => {
+        ctx.drawImage(img,0,0); // Or at whatever offset you like
+      };
+      img.src = initialDrawing;
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let { hasDrawing, lastX, lastY } = this.state
+    if (this.state.hasDrawing &&
+        (prevState.lastX !== lastX || prevState.lastY !== lastY)) {
+      this.props.onDrawingChanged(this.saveDrawing())
     }
   }
 
