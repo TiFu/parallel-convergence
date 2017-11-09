@@ -9,8 +9,11 @@ functions.firebase.auth().signInAnonymously().catch(function(error) {
     // ...
 }).then(() => functions.createSession("11233")).then((roomId) => {
     console.log("RoomId: " + roomId);
-    sleep.sleep(3);
-    for (let i = 0; i < 5; i++) {
-        functions.draw("test", roomId)
-    }
+    sleep.sleep(10);
+    console.log("drawing")
+    return functions.draw("test", roomId)
+}).catch((err) => {
+    console.log(err)
+}).then(() => {
+    console.log("Done")
 })

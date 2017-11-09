@@ -6,8 +6,12 @@ functions.firebase.auth().signInAnonymously().catch(function(error) {
     var errorMessage = error.message;
     console.log(error)
     // ...
-}).then(() => functions.joinSession("11233", roomEvents));
+}).then(() => functions.joinSession("11233", roomEvents, roomErrorEvent));
+
+function roomErrorEvent(errorObject) {
+    console.log("Read failed", errorObject)
+}
 
 function roomEvents(snap) {
-    console.log("New value: " + snap.val())
+    console.log("New value: ", snap.val())
 }
