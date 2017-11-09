@@ -59,7 +59,10 @@ export default class App extends React.Component {
 
   handleDrawingChanged = newDrawingData => {
     if (this.roomId) {
+      console.log("DRAW NEW DATA")
       draw(newDrawingData, this.roomId, this.userId)
+    } else {
+      console.log("DRAW NO NEW DATE")
     }
   }
 

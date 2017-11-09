@@ -206,6 +206,9 @@ class DrawableCanvas extends React.Component {
   }
 
   drawOval(lX, lY, cX, cY, ctx) {
+    if (!this.state.hasDrawing) {
+      this.setState({hasDrawing: true})
+    }
     console.log("Drawing oval on ", ctx)
     this.setDrawingSettings(ctx)
     let radX = -(lX - cX) / 2
