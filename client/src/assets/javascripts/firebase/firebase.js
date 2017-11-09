@@ -89,7 +89,7 @@ function undoLast(roomId, userId) {
     const undoRef = database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1)
     return undoRef.once("value").then((snap) => {
         let val = snap.val();
-        return undoRef.remove().then(() => {
+        return database.ref("/rooms/" + roomId + "/" + userId).set(val).then(() => undoRef).remove().then(() => {
             undoUpperBound--;
             return val;
         });
