@@ -12,7 +12,7 @@ import {
 
 
 // TODO: Make this not hardcoded
-const gameId = 11235
+const gameId = 11236
 
 export default class App extends React.Component {
   constructor(props) {
@@ -89,12 +89,12 @@ export default class App extends React.Component {
       <div style={{ position: "absolute", zIndex: "2" }}>
         <button onClick={this.clearCanvas}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
         <button onClick={this.undo} ><i className="fa fa-undo" aria-hidden="true"></i></button>
-        <select onChange={this.changeLineWidth} style={{"font-family": "FontAwesome', Helvetica"}} defaultValue={this.state.lineWidth.toString()}>
-          <option value="2" style={ {fontSize: "12pt"} }>&#8722;</option>
-          <option value="4" style={ {fontSize: "16pt"} }>&#8722;</option>
-          <option value="6" style={ {fontSize: "20pt"} }>&#8722;</option>
-          <option value="8" style={ {fontSize: "24pt"} }>&#8722;</option>
-          <option value="10" style={ {fontSize: "28pt"} }>&#8722;</option>
+        <select onChange={this.changeLineWidth} style={{"fontFamily": "FontAwesome', Helvetica"}}>
+          <option value="2" selected={this.state.lineWidth == 2} style={ {fontSize: "12pt"} }>&#8722;</option>
+          <option value="4" selected={this.state.lineWidth == 4} style={ {fontSize: "16pt"} }>&#8722;</option>
+          <option value="6" selected={this.state.lineWidth == 6} style={ {fontSize: "20pt"} }>&#8722;</option>
+          <option value="8"  selected={this.state.lineWidth == 8} style={ {fontSize: "24pt"} }>&#8722;</option>
+          <option value="10"  selected={this.state.lineWidth == 10} style={ {fontSize: "28pt"} }>&#8722;</option>
         </select>
         <button onClick={this.selectFree} style={ {marginLeft: "10px"}} ><i className="fa fa-pencil" aria-hidden="true"></i></button>
         <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>

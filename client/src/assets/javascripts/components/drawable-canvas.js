@@ -45,6 +45,7 @@ class DrawableCanvas extends React.Component {
     this.state = {
       canvas: null,
       context: null,
+      drawContext: null,
       drawing: false,
       hasDrawing: false,
       lastX: 0,
@@ -54,15 +55,22 @@ class DrawableCanvas extends React.Component {
   }
 
   componentDidMount(){
-    let canvas = ReactDOM.findDOMNode(this)
-
+    let canvas = this.refs.displayCanvas
     canvas.width  = this.props.canvasWidth
     canvas.height = this.props.canvasHeight
-
     let ctx = canvas.getContext('2d')
 
+    let displayCtx = null
+    if (this.props.isDrawable) {
+      this.refs.drawCanvas.width = this.props.canvasWidth
+      this.refs.drawCanvas.height = this.props.canvasHeight
+      console.log("Setting context of draw canvas")
+      displayCtx = this.refs.drawCanvas.getContext("2d")
+      console.log("CTX null: " + displayCtx == null)
+    }
     this.setState({
       canvas: canvas,
+      drawContext: displayCtx,
       context: ctx
     }, () => {
       if (this.props.initialDrawing) {
@@ -85,7 +93,9 @@ class DrawableCanvas extends React.Component {
       canvas
     ) {
       if (!nextProps.initialDrawing) {
-        this.resetCanvas()
+        this.resetCanvas(this.state.context)
+        if (this.props.isDrawable)
+          this.resetCanvas(this.state.drawContext)
       }
       else {
         let img = new Image;
@@ -139,7 +149,7 @@ class DrawableCanvas extends React.Component {
 
       currentX = e.clientX - rect.left
       currentY = e.clientY - rect.top
-
+      console.log("mouse moved with drawing tool " + this.props.drawingTool)
       if (this.props.drawingTool == DrawingTool.FREE) {
         console.log("Mouse move free")
         this.draw(lastX, lastY, currentX, currentY)
@@ -147,6 +157,14 @@ class DrawableCanvas extends React.Component {
           lastX: currentX,
           lastY: currentY
         })
+      } else if (this.props.drawingTool == DrawingTool.OVAL) {
+        console.log("move oval")
+        if (this.props.isDrawable) {
+          console.log("DRAWING OVAL ON DRAW CANVAS")
+          this.resetCanvas(this.state.drawContext)
+          this.state.drawContext.beginPath()
+          this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.drawContext)
+        }
       }
     }
   }
@@ -158,44 +176,47 @@ class DrawableCanvas extends React.Component {
       let currentY = e.clientY - rect.top
       if (this.props.drawingTool == DrawingTool.OVAL) {
         console.log("mouse move cycle")
-        this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY)
+        this.resetCanvas(this.state.drawContext)
+        this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)
       }
       this.props.onMouseUp(this.saveDrawing())
     }
     this.setState({ drawing: false })
   }
 
-  drawOval(lX, lY, cX, cY) {
-    this.setDrawingSettings()
+  drawOval(lX, lY, cX, cY, ctx) {
+    console.log("Drawing oval on ", ctx)
+    this.setDrawingSettings(ctx)
     let radX = -(lX - cX) / 2
     let radY = -(lY - cY) / 2
     let centerX = Math.abs(lX + radX)
     let centerY = Math.abs(lY + radY)
     radX = Math.abs(radX)
     radY = Math.abs(radY)
-    this.state.context.ellipse(centerX, centerY, radX, radY, 0, 0, 2 * Math.PI)
-    this.state.context.stroke();
+    ctx.ellipse(centerX, centerY, radX, radY, 0, 0, 2 * Math.PI)
+    ctx.stroke();
   }
 
-  setDrawingSettings() {
-    this.state.context.strokeStyle = this.props.brushColor
-    this.state.context.lineWidth = this.props.lineWidth
+  setDrawingSettings(ctx) {
+    ctx.strokeStyle = this.props.brushColor
+    ctx.lineWidth = this.props.lineWidth
     console.log("Set line width: " + this.props.lineWidth)
   }
   draw(lX, lY, cX, cY){
     if (!this.state.hasDrawing) {
       this.setState({hasDrawing: true})
     }
-    this.setDrawingSettings()
+    this.setDrawingSettings(this.state.context)
     this.state.context.moveTo(lX,lY)
     this.state.context.lineTo(cX,cY)
     this.state.context.stroke()
   }
 
-  resetCanvas(){
-    let width = this.state.context.canvas.width
-    let height = this.state.context.canvas.height
-    this.state.context.clearRect(0, 0, width, height)
+  resetCanvas(ctx){
+    console.log("Resetting canvas", ctx)
+    let width = ctx.canvas.width
+    let height = ctx.canvas.height
+    ctx.clearRect(0, 0, width, height)
   }
 
   getDefaultStyle(){
@@ -213,8 +234,25 @@ class DrawableCanvas extends React.Component {
   }
 
   render() {
+    let drawCanvas = null
+    if (this.props.isDrawable) {
+      drawCanvas = <canvas ref="drawCanvas"
+      style={this.canvasStyle()}
+      onMouseDown={this.handleOnMouseDown} 
+      onTouchStart={this.handleOnMouseDown}
+      onMouseMove={this.handleOnMouseMove}
+      onTouchMove={this.handleOnMouseMove}
+      onMouseUp={this.handleOnMouseUp}
+      onTouchEnd={this.handleOnMouseUp}
+      className="drawable-canvas display"
+    />
+
+    }
     return (
+      <div>
+        {drawCanvas}
       <canvas
+        ref="displayCanvas"
         style={this.canvasStyle()}
         onMouseDown={this.handleOnMouseDown} 
         onTouchStart={this.handleOnMouseDown}
@@ -224,6 +262,7 @@ class DrawableCanvas extends React.Component {
         onTouchEnd={this.handleOnMouseUp}
         className="drawable-canvas"
       />
+      </div>
     )
   }
 }
