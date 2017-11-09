@@ -43,7 +43,7 @@
 					"top": 0,
 					"left": 0
 				},
-				"topmost": true,
+				"topmost": false,
 				"block_top_window_navigation": true,
 				"keep_window_location": false,
 				"background_optimization": true,
