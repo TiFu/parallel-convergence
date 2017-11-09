@@ -43,7 +43,16 @@ function addUserToRoom(roomId) {
 }
 
 function clearUndo(roomId, userId) {
-    return database.ref("/undo/rooms/" + roomId + "/" + userId).remove();
+    return database.ref("/undo/rooms/" + roomId + "/" + userId).remove().then(() => {
+        return database.ref("/rooms/" + roomId + "/" + userId).once("value");
+    }).then((data) => {
+        let val = data.val();
+        if (val == null) {
+            val = "";
+        }
+        console.log("Setting value: ", val)
+        return addUndoStep(val, roomId, userId);
+    })
 }
 
 // returns {roomId: , userId }
@@ -77,22 +86,22 @@ function addUndoStep(imageData, roomId, userId) {
 }
 
 function canUndoStep(roomId, userId) {
-    return undoLowerBound < undoUpperBound;
+    return undoLowerBound < undoUpperBound - 1;
 }
 
 // returns image data
 function undoLast(roomId, userId) {
     // no undo step available
-    if (undoLowerBound >= undoUpperBound) {
+    if (undoLowerBound >= undoUpperBound - 1) {
         return Promise.reject("No undo step available");
     }
+
     const undoRef = database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1)
-    return undoRef.once("value").then((snap) => {
-        let val = snap.val();
-        return database.ref("/rooms/" + roomId + "/" + userId).set(val).then(() => undoRef).remove().then(() => {
-            undoUpperBound--;
-            return val;
-        });
+    return undoRef.remove().then(() => {
+        undoUpperBound--;
+        return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1).once("value");        
+    }).then((last) => {
+        return database.ref("/rooms/" + roomId + "/" + userId).set(last.val());
     })
 }
 
