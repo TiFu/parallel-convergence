@@ -180,6 +180,7 @@ class DrawableCanvas extends React.Component {
   setDrawingSettings() {
     this.state.context.strokeStyle = this.props.brushColor
     this.state.context.lineWidth = this.props.lineWidth
+    console.log("Set line width: " + this.props.lineWidth)
   }
   draw(lX, lY, cX, cY){
     if (!this.state.hasDrawing) {

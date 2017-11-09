@@ -12,13 +12,13 @@ import {
 
 
 // TODO: Make this not hardcoded
-const gameId = 11234
+const gameId = 11235
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE  }
+    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4  }
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
@@ -80,12 +80,23 @@ export default class App extends React.Component {
     this.setState({drawingTool: DrawingTool.TEXT})
   }
 
+  changeLineWidth = e => {
+    console.log("New line width: " + Number.parseInt(e.target.value))
+    this.setState({lineWidth: Number.parseInt(e.target.value)})
+  }
   formatButtons() {
     return (
       <div style={{ position: "absolute", zIndex: "2" }}>
         <button onClick={this.clearCanvas}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
         <button onClick={this.undo} ><i className="fa fa-undo" aria-hidden="true"></i></button>
-        <button onClick={this.selectFree}><i className="fa fa-pencil" aria-hidden="true"></i></button>
+        <select onChange={this.changeLineWidth} style={{"font-family": "FontAwesome', Helvetica"}} defaultValue={this.state.lineWidth.toString()}>
+          <option value="2" style={ {fontSize: "12pt"} }>&#8722;</option>
+          <option value="4" style={ {fontSize: "16pt"} }>&#8722;</option>
+          <option value="6" style={ {fontSize: "20pt"} }>&#8722;</option>
+          <option value="8" style={ {fontSize: "24pt"} }>&#8722;</option>
+          <option value="10" style={ {fontSize: "28pt"} }>&#8722;</option>
+        </select>
+        <button onClick={this.selectFree} style={ {marginLeft: "10px"}} ><i className="fa fa-pencil" aria-hidden="true"></i></button>
         <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>
       </div>
     )
@@ -117,6 +128,7 @@ export default class App extends React.Component {
       <DrawableCanvas
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
+        lineWidth={this.state.lineWidth}
         onMouseUp={this.handleMouseUp}
         drawingTool={this.state.drawingTool}
         isDrawable={true}
