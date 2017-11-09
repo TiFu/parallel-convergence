@@ -57,7 +57,8 @@
 		},
 		"externally_connectable": {
 			"matches": [
-				"https://www.googleapis.com"
+				"https://www.googleapis.com",
+				"https://securetoken.googleapis.com"
 			]
 		},
 		"content_scripts": [
