@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace replay
 {
 	struct vector2 
@@ -12,13 +14,15 @@ namespace replay
 		float x; float y; 
 	};
 
+	bool connect_to_league();
+
 	class camera
 	{
 	public:
 		camera() { }
 		virtual ~camera() { }
 
-		virtual bool connect_to_league() = 0;
+		virtual bool init() = 0;
 
 		virtual vector2 get_position() = 0;
 		virtual void set_position(float x, float y) = 0;
@@ -30,11 +34,25 @@ namespace replay
 		camera_impl();
 		~camera_impl() { }
 
-		bool connect_to_league();
+		bool init();
 
 		vector2 get_position();
 		void set_position(float x, float y);
 		void set_position(vector2 vec);
 
+	private:
+		uint32_t object_address;
+	};
+
+	class controls
+	{
+	public:
+		controls() { }
+		virtual ~controls() { }
+
+		virtual bool init() = 0;
+
+		virtual vector2 get_position() = 0;
+		virtual void set_position(float x, float y) = 0;
 	};
 };

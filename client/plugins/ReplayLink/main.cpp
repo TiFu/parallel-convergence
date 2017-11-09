@@ -16,16 +16,16 @@ namespace replay
 {
 	Process league_process;
 	bool attached = false; 
-	
-	uint32_t camera_object_address = 0;
 
 	camera_impl::camera_impl()
 	{
 	}
 
 
-	bool camera_impl::connect_to_league()
+	bool connect_to_league()
 	{
+		if (attached) return;
+
 		std::vector<DWORD> t_ProcessList;
 
 		std::wcout << L"Waiting for '" << PROCESS_NAME << L"'." << std::endl;
@@ -44,9 +44,17 @@ namespace replay
 		}
 
 		attached = true;
+		return true;
+	}
+
+	bool camera_impl::init()
+	{
+		if (attached == false && connect_to_league() == false)
+			return false;
+
 		std::cout << "Trying to find the pattern for the camera object..." << std::endl;
 
-		camera_object_address = 0;
+		object_address = 0;
 		PatternSearch pattern("\x8B\x0D\xCC\xCC\xCC\xCC\x8B\x49\x24\xE8\xCC\xCC\xCC\xCC\x8B");
 
 		std::vector<ptr_t> results;
@@ -59,19 +67,19 @@ namespace replay
 			return false;
 		}
 
-		if (league_process.memory().Read<uint32_t>(results[0] + 2, camera_object_address))
+		if (league_process.memory().Read<uint32_t>(results[0] + 2, object_address))
 		{
 			std::cout << "Failed to read a part of the pattern." << std::endl;
 			return false;
 		}
 
-		if (league_process.memory().Read<uint32_t>(camera_object_address, camera_object_address))
+		if (league_process.memory().Read<uint32_t>(object_address, object_address))
 		{
 			std::cout << "Failed to read in the multiplayer client." << std::endl;
 			return false;
 		}
 
-		if (league_process.memory().Read<uint32_t>(camera_object_address + 12, camera_object_address))
+		if (league_process.memory().Read<uint32_t>(object_address + 12, object_address))
 		{
 			std::cout << "Failed to get the camera object." << std::endl;
 			return false;
@@ -83,13 +91,13 @@ namespace replay
 	vector2 camera_impl::get_position()
 	{
 		vector2 t_result(0, 0);
-		if (league_process.memory().Read<float>(camera_object_address + 0x12c, t_result.x))
+		if (league_process.memory().Read<float>(object_address + 0x12c, t_result.x))
 		{
 			std::cout << "Failed to read x position of camera." << std::endl;
 			return vector2(-1, -1);
 		}
 
-		if (league_process.memory().Read<float>(camera_object_address + 0x134, t_result.y))
+		if (league_process.memory().Read<float>(object_address + 0x134, t_result.y))
 		{
 			std::cout << "Failed to read y position of camera." << std::endl;
 			return vector2(-1, -1);
@@ -100,13 +108,13 @@ namespace replay
 
 	void camera_impl::set_position(float x, float y)
 	{
-		if (league_process.memory().Write<float>(camera_object_address + 0x12c, x))
+		if (league_process.memory().Write<float>(object_address + 0x12c, x))
 		{
 			std::cout << "Failed to write x position of camera." << std::endl;
 			return;
 		}
 
-		if (league_process.memory().Write<float>(camera_object_address + 0x134, y))
+		if (league_process.memory().Write<float>(object_address + 0x134, y))
 		{
 			std::cout << "Failed to write y position of camera." << std::endl;
 			return;
@@ -123,7 +131,7 @@ int main()
 {
 	replay::camera_impl t_camera;
 
-	t_camera.connect_to_league();
+	t_camera.init();
 
 	while (true)
 	{
