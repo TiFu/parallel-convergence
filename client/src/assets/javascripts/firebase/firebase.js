@@ -95,17 +95,21 @@ function canUndoStep(roomId, userId) {
 
 // returns image data
 function undoLast(roomId, userId) {
-    // no undo step available
-    if (undoLowerBound >= undoUpperBound - 1) {
-        return Promise.reject("No undo step available");
-    }
+  // no undo step available
+  if (undoLowerBound >= undoUpperBound - 1) {
+    return Promise.reject("No undo step available");
+  }
 
-    const undoRef = database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1)
+  const undoRef = database.ref("/undo/rooms/" + roomId + "/" + userId)
+    .child(undoUpperBound - 1)
+
     return undoRef.remove().then(() => {
-        undoUpperBound--;
-        return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1).once("value");        
+      undoUpperBound--;
+      return database.ref("/undo/rooms/" + roomId + "/" + userId)
+        .child(undoUpperBound - 1)
+        .once("value")
     }).then((last) => {
-        return database.ref("/rooms/" + roomId + "/" + userId).set(last.val());
+      return database.ref("/rooms/" + roomId + "/" + userId).set(last.val());
     })
 }
 
