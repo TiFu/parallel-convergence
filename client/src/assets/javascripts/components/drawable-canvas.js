@@ -13,7 +13,6 @@ const propTypes = {
     backgroundColor: PropTypes.string,
     cursor: PropTypes.string
   }),
-  clear: PropTypes.bool,
   onDrawingChanged: PropTypes.func.isRequired,
   initialDrawing: PropTypes.string.isRequired,
 }
@@ -27,7 +26,6 @@ const defaultProps = {
     backgroundColor: '#FFFFFF',
     cursor: 'pointer'
   },
-  clear: false
 }
 
 class DrawableCanvas extends React.Component {
@@ -63,16 +61,21 @@ class DrawableCanvas extends React.Component {
     let { canvas } = this.state
     let { initialDrawing } = this.props
 
-    if(nextProps.clear){
-      this.resetCanvas()
-    }
-    if (this.props.initialDrawing !== nextProps.initialDrawing && canvas) {
-      let ctx = canvas.getContext('2d');
-      let img = new Image;
-      img.onload = () => {
-        ctx.drawImage(img,0,0); // Or at whatever offset you like
-      };
-      img.src = initialDrawing;
+    if (
+      initialDrawing !== nextProps.initialDrawing &&
+      canvas.toDataURL() !== nextProps.initialDrawing &&
+      canvas
+    ) {
+      if (!nextProps.initialDrawing) {
+        this.resetCanvas()
+      }
+      else {
+        let img = new Image;
+        img.onload = () => {
+          this.state.context.drawImage(img,0,0); // Or at whatever offset you like
+        };
+        img.src = initialDrawing;
+      }
     }
   }
 
@@ -155,7 +158,6 @@ class DrawableCanvas extends React.Component {
   }
 
   resetCanvas(){
-    this.setState({hasDrawing: false})
     let width = this.state.context.canvas.width
     let height = this.state.context.canvas.height
     this.state.context.clearRect(0, 0, width, height)
@@ -183,19 +185,16 @@ class DrawableCanvas extends React.Component {
 
   render() {
     return (
-      React.createElement(
-        "canvas",
-        {
-          style: this.canvasStyle(), 
-          onMouseDown: this.handleOnMouseDown, 
-          onTouchStart: this.handleOnMouseDown, 
-          onMouseMove: this.handleOnMouseMove, 
-          onTouchMove: this.handleOnMouseMove, 
-          onMouseUp: this.handleonMouseUp, 
-          onTouchEnd: this.handleonMouseUp,
-          className: "drawable-canvas",
-        }
-      )
+      <canvas
+        style={this.canvasStyle()}
+        onMouseDown={this.handleOnMouseDown} 
+        onTouchStart={this.handleOnMouseDown}
+        onMouseMove={this.handleOnMouseMove}
+        onTouchMove={this.handleOnMouseMove}
+        onMouseUp={this.handleonMouseUp}
+        onTouchEnd={this.handleonMouseUp}
+        className="drawable-canvas"
+      />
     )
   }
 }

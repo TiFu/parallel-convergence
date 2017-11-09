@@ -27,7 +27,12 @@ export default class App extends React.Component {
   }
 
   handleRoomEvent = data => {
-    this.setState({ initialDrawing: data.val() })
+    if (!data.val()) {
+      this.setState({ initialDrawing: ""})
+    }
+    else {
+      this.setState({ initialDrawing: data.val() })
+    }
   }
 
   handleDrawingChanged = newDrawingData => {
@@ -36,10 +41,25 @@ export default class App extends React.Component {
     }
   }
 
+  clearCanvas = e => {
+    this.setState({ initialDrawing: "" }, () => {
+      this.handleDrawingChanged("")
+    })
+  }
+
+  formatButtons() {
+    return (
+      <div>
+        <button style={{ position: "absolute" }} onClick={this.clearCanvas}>Clear</button>
+      </div>
+    )
+  }
+
   render() {
     let { initialDrawing } = this.state
     return (
       <div className="app">
+        {this.formatButtons()}
         <DrawableCanvas
           initialDrawing={initialDrawing}
           onDrawingChanged={this.handleDrawingChanged}
