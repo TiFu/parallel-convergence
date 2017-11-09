@@ -19,6 +19,7 @@ export default class App extends React.Component {
     super(props)
 
     this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4  }
+    this.color = "black";
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
@@ -98,8 +99,18 @@ export default class App extends React.Component {
         </select>
         <button onClick={this.selectFree} style={ {marginLeft: "10px"}} ><i className="fa fa-pencil" aria-hidden="true"></i></button>
         <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>
+        {/* TODO: setup stylesheets instead on inline CSS */}
+        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"black", width: "20px", height: "20px"}}></button>
+        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"red", width: "20px", height: "20px"}}></button>
+        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"green", width: "20px", height: "20px"}}></button>
+        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"blue", width: "20px", height: "20px"}}></button>
       </div>
     )
+  }
+
+  switchColor = e => {
+    // this.color = e.currentTarget.style.backgroundColor;
+    // TODO indicate which color is currently selected
   }
 
   formatOtherCanvases() {
@@ -133,6 +144,7 @@ export default class App extends React.Component {
         drawingTool={this.state.drawingTool}
         isDrawable={true}
         canvasStyle={{ zIndex: "1" }}
+        brushColor={this.color}
       /> :
       null
 
