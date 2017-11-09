@@ -4,6 +4,7 @@ import {DrawableCanvas, DrawingTool} from "components/drawable-canvas"
 import {
   addUndoStep,
   undoLast,
+  addTimer,
   draw,
   firebase,
   joinSession,
@@ -18,7 +19,11 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
+<<<<<<< HEAD
     this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, color: "black"  }
+=======
+    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [] }
+>>>>>>> TIMERS
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
@@ -31,9 +36,19 @@ export default class App extends React.Component {
             this.roomId = ids.roomId
             this.userId = ids.userId
             registerDrawListeners(
-              this.roomId, this.handleRoomEvent, () => console.log("SAD"))
+              this.roomId, this.handleRoomEvent, () => console.log("SAD"), this.handleTimerEvent, () => console.log("SAD"))
           })
       })
+  }
+
+  handleTimerEvent = data => {
+    if (!data.val()) {
+      console.log("empty timer")
+      this.setState({timers: []})
+    } else {
+      console.log("Timers: ", data.val())
+      this.setState({timers: data.val()})
+    }
   }
 
   handleRoomEvent = data => {
@@ -84,6 +99,25 @@ export default class App extends React.Component {
     console.log("New line width: " + Number.parseInt(e.target.value))
     this.setState({lineWidth: Number.parseInt(e.target.value)})
   }
+
+  addTimerEvent = e => {
+    let timerName = this.refs.timerName.value;
+    let duration = this.refs.timerDuration.value
+    // try to parse duration
+    let splitDuration = duration.split(":")
+    let timerDuration = 0
+    if (splitDuration.length == 1) {
+      timerDuration += Number.parseInt(splitDuration[0])
+    } else {
+      timerDuration += Number.parseInt(splitDuration[0]) * 60 + Number.parseInt(splitDuration[1]) 
+    }
+
+    console.log("Name: " + timerName)
+    console.log("Duration: " + timerDuration)
+    addTimer(this.roomId, timerName, timerDuration).catch((err) => {
+      console.log(err)
+    })
+  }
   formatButtons() {
     return (
       <div style={{ position: "absolute", zIndex: "2" }}>
@@ -103,6 +137,9 @@ export default class App extends React.Component {
         <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"red", width: "20px", height: "20px"}}></button>
         <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"green", width: "20px", height: "20px"}}></button>
         <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"blue", width: "20px", height: "20px"}}></button>
+        <input style={ {marginLeft: "20px"}} ref="timerName" type="text" name="timerName" placeholder="Timer Name"/>
+        <input ref="timerDuration" type="text" name="timerDuration" placeholder="Duration (mm:ss)" />
+        <button onClick={this.addTimerEvent}>Add Timer</button>
       </div>
     )
   }
@@ -132,8 +169,15 @@ export default class App extends React.Component {
 
   render() {
     let { canvases } = this.state
-
-    console.log("RENDRE: " + this.state.drawingTool)
+    let timerHtml = []
+    for (let key in this.state.timers) {
+      console.log(this.state.timers[key])
+      let minutes = Math.floor(this.state.timers[key]["time"] / 60)
+//      minutes = minutes < 10 ? "0" + minutes : minutes;
+      let seconds = this.state.timers[key]["time"] - 60 * minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      timerHtml.push(<div key={key}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
+    }
     let myCanvas = this.userId ?
       <DrawableCanvas
         initialDrawing={canvases[this.userId] || ""}
@@ -147,11 +191,15 @@ export default class App extends React.Component {
       /> :
       null
 
+      // TODO: set left to canvasWidth/screenWidth
     return (
       <div className="app">
         {this.formatButtons()}
         {myCanvas}
         {this.formatOtherCanvases()}
+        <div style={{"position": "absolute", "left": 854, "marginRight": "20px", "textAlign": "right"}}>
+          {timerHtml}
+          </div>
       </div>
     )
   }

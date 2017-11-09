@@ -30,8 +30,10 @@ function joinSession(gameId) {
     }).then(addUserToRoom);
 }
 
-function registerDrawListeners(roomId, roomEventCallback, roomEventErrorCallback) {
+function registerDrawListeners(roomId, roomEventCallback, roomEventErrorCallback, timerCallback, timerErrorCallback) {
     database.ref("/rooms/" + roomId).on("value", roomEventCallback, roomEventErrorCallback)
+    console.log("Registering listener for " + roomId)
+    database.ref("/timers/rooms/" + roomId).on("value", timerCallback, timerErrorCallback)        
 }
 
 function addUserToRoom(roomId) {
@@ -40,6 +42,32 @@ function addUserToRoom(roomId) {
     return clearUndo(roomId, uid).then(() => { 
         return { "roomId": roomId, "userId": uid}; 
     });
+}
+
+let intervals = {}
+
+function addTimer(roomId, name, durationInSeconds) {
+    let pushRef = database.ref("/timers/rooms/" + roomId).push()
+    const key = pushRef.key;
+    return pushRef.set({ name: name, time: durationInSeconds}).then(() => {
+        intervals[key] = setInterval(() => {
+            database.ref("/timers/rooms/" + roomId + "/" + key).once("value").then((snap) => {
+                if (snap.val()["time"] - 1 == -1) {
+                    clearInterval(intervals[key])
+                    removeTimer(roomId, key)
+                } else {
+                    updateTimer(roomId, key, name, snap.val()["time"] - 1)
+                }
+            })
+        }, 1000)
+    })
+}
+
+function removeTimer(roomId, key) {
+    return database.ref("/timers/rooms/" + roomId + "/" + key).remove();
+}
+function updateTimer(roomId, key, name, remainingDuration) {
+    return database.ref("/timers/rooms/" + roomId + "/" + key).set({ name: name, time: remainingDuration})
 }
 
 function clearUndo(roomId, userId) {
@@ -118,6 +146,7 @@ module.exports =  {
     registerDrawListeners: registerDrawListeners,
     createSession: createSession,
     joinSession: joinSession,
+    addTimer: addTimer,
     draw: draw,
     undoLast: undoLast,
     canUndoStep: canUndoStep,
