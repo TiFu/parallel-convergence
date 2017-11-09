@@ -19,11 +19,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-<<<<<<< HEAD
-    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, color: "black"  }
-=======
     this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [] }
->>>>>>> TIMERS
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()

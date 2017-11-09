@@ -198,6 +198,7 @@ class DrawableCanvas extends React.Component {
         console.log("mouse move cycle")
         this.resetCanvas(this.state.drawContext)
         this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)
+        this.props.onDrawingChanged(this.saveDrawing())
       }
       this.props.onMouseUp(this.saveDrawing())
     }
