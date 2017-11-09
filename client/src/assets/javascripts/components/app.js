@@ -1,6 +1,6 @@
 import React from "react"
 
-import DrawableCanvas from "components/drawable-canvas"
+import {DrawableCanvas, DrawingTool} from "components/drawable-canvas"
 import {
   addUndoStep,
   undoLast,
@@ -12,13 +12,13 @@ import {
 
 
 // TODO: Make this not hardcoded
-const gameId = 11233
+const gameId = 11234
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { initialDrawing: "", canvases: {} }
+    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE  }
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
@@ -68,11 +68,17 @@ export default class App extends React.Component {
     undoLast(this.roomId, this.userId)
   }
 
+  selectOval = e => {
+    console.log("Selct Oval: YES")
+    this.setState({drawingTool: DrawingTool.OVAL})
+  }
+
   formatButtons() {
     return (
       <div style={{ position: "absolute", zIndex: "2" }}>
         <button onClick={this.clearCanvas}>Clear</button>
         <button onClick={this.undo}>Undo</button>
+        <button onClick={this.selectOval}>Oval</button>
       </div>
     )
   }
@@ -98,11 +104,13 @@ export default class App extends React.Component {
   render() {
     let { canvases } = this.state
 
+    console.log("RENDRE: " + this.state.drawingTool)
     let myCanvas = this.userId ?
       <DrawableCanvas
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         onMouseUp={this.handleMouseUp}
+        drawingTool={this.state.drawingTool}
         isDrawable={true}
         canvasStyle={{ zIndex: "1" }}
       /> :
