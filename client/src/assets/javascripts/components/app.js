@@ -83,10 +83,10 @@ export default class App extends React.Component {
   formatButtons() {
     return (
       <div style={{ position: "absolute", zIndex: "2" }}>
-        <button onClick={this.clearCanvas}><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-        <button onClick={this.undo} class="marginl"><i class="fa fa-undo" aria-hidden="true"></i></button>
-        <button onClick={this.selectFree}><i class="fa fa-pencil" aria-hidden="true"></i></button>
-        <button onClick={this.selectOval}><i class="fa fa-circle-o" aria-hidden="true"></i></button>
+        <button onClick={this.clearCanvas}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
+        <button onClick={this.undo} ><i className="fa fa-undo" aria-hidden="true"></i></button>
+        <button onClick={this.selectFree}><i className="fa fa-pencil" aria-hidden="true"></i></button>
+        <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>
       </div>
     )
   }
