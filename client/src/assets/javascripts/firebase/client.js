@@ -6,7 +6,7 @@ functions.firebase.auth().signInAnonymously().catch(function(error) {
     var errorMessage = error.message;
     console.log(error)
     // ...
-}).then(() => functions.joinSession("11233", roomEvents, roomErrorEvent));
+}).then(() => functions.joinSession("11234", roomEvents, roomErrorEvent));
 
 function roomErrorEvent(errorObject) {
     console.log("Read failed", errorObject)

@@ -20,7 +20,7 @@ const propTypes = {
     backgroundColor: PropTypes.string,
     cursor: PropTypes.string
   }),
-  drawignTool: PropTypes.any, // TODO: correct prop type
+  drawingTool: PropTypes.string,
   onDrawingChanged: PropTypes.func,
   initialDrawing: PropTypes.string.isRequired,
   isDrawable: PropTypes.bool.isRequired,
@@ -33,8 +33,8 @@ const defaultProps = {
   lineWidth: 4,
   drawingTool: DrawingTool.FREE,
   canvasStyle: {
-    backgroundColor: '#FFFFFF',
-    cursor: 'pointer'
+    backgroundColor: "transparent",
+    cursor: "pointer"
   },
 }
 
@@ -50,12 +50,13 @@ class DrawableCanvas extends React.Component {
       hasDrawing: false,
       lastX: 0,
       lastY: 0,
-      history: []
     }
   }
 
   componentDidMount(){
     let canvas = this.refs.displayCanvas
+    let { initialDrawing } = this.props
+
     canvas.width  = this.props.canvasWidth
     canvas.height = this.props.canvasHeight
     let ctx = canvas.getContext('2d')
@@ -73,19 +74,35 @@ class DrawableCanvas extends React.Component {
       drawContext: displayCtx,
       context: ctx
     }, () => {
-      if (this.props.initialDrawing) {
-        let img = new Image;
-        img.onload = () => {
-          this.state.context.drawImage(img,0,0); // Or at whatever offset you like
-        };
-        img.src = this.props.initialDrawing;
+      if (initialDrawing) {
+        this.drawImageOnCanvas(initialDrawing)
       }
     })
+  }
+
+  drawImageOnCanvas(drawingUrl, withClear) {
+    let drawImage = drawingUrl => {
+      let img = new Image;
+      img.onload = () => {
+        this.state.context.drawImage(img, 0, 0)
+      }
+      img.src = drawingUrl
+      this.setState({ hasDrawing: true })
+    }
+
+    if (withClear) {
+      this.resetCanvas(this.state.context, drawImage.bind(null, drawingUrl))
+    }
+    else {
+      drawImage(drawingUrl)
+    }
   }
 
   componentWillReceiveProps = nextProps => {
     let { canvas } = this.state
     let { initialDrawing } = this.props
+
+    console.log("Next Props: ", nextProps)
 
     if (
       initialDrawing !== nextProps.initialDrawing &&
@@ -98,12 +115,15 @@ class DrawableCanvas extends React.Component {
           this.resetCanvas(this.state.drawContext)
       }
       else {
-        let img = new Image;
-        img.onload = () => {
-          this.state.context.drawImage(img,0,0); // Or at whatever offset you like
-        };
-        img.src = initialDrawing;
-        
+        console.log(canvas.toDataURL().length)
+        console.log(nextProps.initialDrawing.length)
+        if (canvas.toDataURL().length > nextProps.initialDrawing.length) {
+          let withClear = true
+          this.drawImageOnCanvas(nextProps.initialDrawing, withClear)
+        }
+        else {
+          this.drawImageOnCanvas(nextProps.initialDrawing)
+        }
       }
     }
   }
@@ -212,11 +232,11 @@ class DrawableCanvas extends React.Component {
     this.state.context.stroke()
   }
 
-  resetCanvas(ctx){
-    console.log("Resetting canvas", ctx)
-    let width = ctx.canvas.width
-    let height = ctx.canvas.height
-    ctx.clearRect(0, 0, width, height)
+  resetCanvas(context, callback){
+    let width = context.canvas.width
+    let height = context.canvas.height
+    context.clearRect(0, 0, width, height)
+    this.setState({ hasDrawing: false }, callback)
   }
 
   getDefaultStyle(){
