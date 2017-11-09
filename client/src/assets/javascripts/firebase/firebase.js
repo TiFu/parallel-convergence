@@ -30,7 +30,7 @@ function joinSession(gameId) {
     }).then(addUserToRoom);
 }
 
-function registerDrawListeners(roomEventCallback, roomEventErrorCallback) {
+function registerDrawListeners(roomId, roomEventCallback, roomEventErrorCallback) {
     database.ref("/rooms/" + roomId).on("value", roomEventCallback, roomEventErrorCallback)
 }
 
@@ -70,19 +70,23 @@ function draw(str, roomId, userId) {
 }
 
 const MAX_UNDO_STEPS = 10;
-undoLowerBound = 0;
-undoUpperBound = 0; // next empty child
+let undoLowerBound = 0;
+let undoUpperBound = 0; // next empty child
 function addUndoStep(imageData, roomId, userId) {
-    return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound).set(imageData).then(() => {
+  return database.ref("/undo/rooms/" + roomId + "/" + userId)
+    .child(undoUpperBound)
+    .set(imageData)
+    .then(() => {
         undoUpperBound++;
         if (undoUpperBound - undoLowerBound > MAX_UNDO_STEPS) {
-            return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoLowerBound).remove().then(() => {
-                undoLowerBound++;
-                console.log("Upper: " + undoUpperBound + " / Lower: " + undoLowerBound)
+          return database.ref("/undo/rooms/" + roomId + "/" + userId)
+            .child(undoLowerBound)
+            .remove()
+            .then(() => {
+              undoLowerBound++;
             })
         }
-        console.log("Upper: " + undoUpperBound + " / Lower: " + undoLowerBound)
-    });
+    })
 }
 
 function canUndoStep(roomId, userId) {

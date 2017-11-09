@@ -66,11 +66,6 @@ export default class App extends React.Component {
 
   undo = e => {
     undoLast(this.roomId, this.userId)
-      .then(data => {
-        let { canvases } = this.state
-        canvases[this.userId] = ""
-        this.setState({ canvases })
-      })
   }
 
   formatButtons() {
@@ -102,9 +97,6 @@ export default class App extends React.Component {
 
   render() {
     let { canvases } = this.state
-
-    console.log(canvases)
-    console.log(canvases[this.userId])
 
     let myCanvas = this.userId ?
       <DrawableCanvas
