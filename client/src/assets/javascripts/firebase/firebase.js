@@ -34,7 +34,13 @@ function joinSession(gameId, roomEventCallback, roomEventErrorCallback) {
 function addUserToRoom(roomId) {
     const uid = firebase.auth().currentUser.uid
     console.log("User Info", { "roomId": roomId, "canvasId": uid})
-    return { "roomId": roomId, "userId": uid};
+    return clearUndo(roomId, uid).then(() => { 
+        return { "roomId": roomId, "userId": uid}; 
+    });
+}
+
+function clearUndo(roomId, userId) {
+    return database.ref("/rooms/undo/" + roomId + "/" + userId).remove();
 }
 
 // returns {roomId: , userId }
@@ -51,11 +57,19 @@ function draw(str, roomId, userId) {
     })
 }
 
+const MAX_UNDO_STEPS = 10;
 undoLowerBound = 0;
 undoUpperBound = 0; // next empty child
 function addUndoStep(imageData, roomId, userId) {
     return database.ref("/rooms/undo/" + roomId + "/" + userId).child(undoUpperBound).set(imageData).then(() => {
         undoUpperBound++;
+        if (undoUpperBound - undoLowerBound > MAX_UNDO_STEPS) {
+            return database.ref("/rooms/undo/" + roomId + "/" + userId).child(undoLowerBound).remove().then(() => {
+                undoLowerBound++;
+                console.log("Upper: " + undoUpperBound + " / Lower: " + undoLowerBound)
+            })
+        }
+        console.log("Upper: " + undoUpperBound + " / Lower: " + undoLowerBound)
     });
 }
 

@@ -14,20 +14,12 @@ functions.firebase.auth().signInAnonymously().catch(function(error) {
     userId = data["userId"]
     return functions.draw("test", roomId, userId)
 }).then(() => {
-    return functions.addUndoStep("blabla", roomId, userId)
-}).then(() => {
-    return functions.addUndoStep("rrrrrr", roomId, userId);
-}).then(() => {
-    sleep.sleep(5);
-    return functions.undoLast(roomId, userId);
-}).then((undone) => {
-    console.log(undone);
-    return functions.undoLast(roomId, userId);
-}).then((undone) => {
-    console.log(undone);
-    return functions.undoLast(roomId, userId);
-}).then((undone) => {
-    console.log(undone)
+    promises = []
+    for (let i =0; i < 15; i++) {
+        let prom = functions.addUndoStep("rrrrrr", roomId, userId);        
+        promises.push(prom)
+    }
+    return Promise.all(promises)
 }).catch((err) => {
     console.log(err)
 })
