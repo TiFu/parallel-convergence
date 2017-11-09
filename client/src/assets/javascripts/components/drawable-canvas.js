@@ -13,8 +13,9 @@ const propTypes = {
     backgroundColor: PropTypes.string,
     cursor: PropTypes.string
   }),
-  onDrawingChanged: PropTypes.func.isRequired,
+  onDrawingChanged: PropTypes.func,
   initialDrawing: PropTypes.string.isRequired,
+  isDrawable: PropTypes.bool.isRequired,
 }
 
 const defaultProps = {
@@ -54,6 +55,14 @@ class DrawableCanvas extends React.Component {
     this.setState({
       canvas: canvas,
       context: ctx
+    }, () => {
+      if (this.props.initialDrawing) {
+        let img = new Image;
+        img.onload = () => {
+          this.state.context.drawImage(img,0,0); // Or at whatever offset you like
+        };
+        img.src = this.props.initialDrawing;
+      }
     })
   }
 
@@ -112,7 +121,9 @@ class DrawableCanvas extends React.Component {
       })
     }
 
-    this.setState({ drawing: true })
+    if (this.props.isDrawable) {
+      this.setState({ drawing: true })
+    }
   }
 
   handleOnMouseMove = e => {
@@ -140,10 +151,11 @@ class DrawableCanvas extends React.Component {
     }
   }
 
-  handleonMouseUp = () =>{
-    this.setState({
-      drawing: false
-    })
+  handleOnMouseUp = () =>{
+    if (this.state.drawing) {
+      this.props.onMouseUp(this.saveDrawing())
+    }
+    this.setState({ drawing: false })
   }
 
   draw(lX, lY, cX, cY){
@@ -165,8 +177,9 @@ class DrawableCanvas extends React.Component {
 
   getDefaultStyle(){
     return {
-      backgroundColor: '#FFFFFF',
-      cursor: 'pointer'
+      cursor: "pointer",
+      position: "absolute",
+      zIndex: "0",
     }
   }
 
@@ -191,8 +204,8 @@ class DrawableCanvas extends React.Component {
         onTouchStart={this.handleOnMouseDown}
         onMouseMove={this.handleOnMouseMove}
         onTouchMove={this.handleOnMouseMove}
-        onMouseUp={this.handleonMouseUp}
-        onTouchEnd={this.handleonMouseUp}
+        onMouseUp={this.handleOnMouseUp}
+        onTouchEnd={this.handleOnMouseUp}
         className="drawable-canvas"
       />
     )
