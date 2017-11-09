@@ -69,16 +69,24 @@ export default class App extends React.Component {
   }
 
   selectOval = e => {
-    console.log("Selct Oval: YES")
     this.setState({drawingTool: DrawingTool.OVAL})
+  }
+
+  selectFree = e => {
+    this.setState({drawingTool: DrawingTool.FREE})
+  }
+
+  selectText = e => {
+    this.setState({drawingTool: DrawingTool.TEXT})
   }
 
   formatButtons() {
     return (
       <div style={{ position: "absolute", zIndex: "2" }}>
-        <button onClick={this.clearCanvas}>Clear</button>
-        <button onClick={this.undo}>Undo</button>
-        <button onClick={this.selectOval}>Oval</button>
+        <button onClick={this.clearCanvas}><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        <button onClick={this.undo} class="marginl"><i class="fa fa-undo" aria-hidden="true"></i></button>
+        <button onClick={this.selectFree}><i class="fa fa-pencil" aria-hidden="true"></i></button>
+        <button onClick={this.selectOval}><i class="fa fa-circle-o" aria-hidden="true"></i></button>
       </div>
     )
   }

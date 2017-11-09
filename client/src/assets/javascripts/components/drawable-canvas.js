@@ -173,10 +173,6 @@ class DrawableCanvas extends React.Component {
     let centerY = Math.abs(lY + radY)
     radX = Math.abs(radX)
     radY = Math.abs(radY)
-    console.log(centerX)
-    console.log(centerY)
-    console.log(radX)
-    console.log(radY)
     this.state.context.ellipse(centerX, centerY, radX, radY, 0, 0, 2 * Math.PI)
     this.state.context.stroke();
   }
