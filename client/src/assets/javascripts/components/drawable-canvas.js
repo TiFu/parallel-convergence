@@ -6,7 +6,8 @@ import PropTypes from "prop-types"
 
 const DrawingTool = {
   OVAL: "OVAL",
-  FREE: "FREE"
+  FREE: "FREE",
+  ARROW: "ARROW"
 };
 
 Object.freeze(DrawingTool);
@@ -185,6 +186,14 @@ class DrawableCanvas extends React.Component {
           this.state.drawContext.beginPath()
           this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.drawContext)
         }
+      } else if (this.props.drawingTool == DrawingTool.ARROW) {
+        console.log("move oval")
+        if (this.props.isDrawable) {
+          console.log("DRAWING arrow ON DRAW CANVAS")
+          this.resetCanvas(this.state.drawContext)
+          this.state.drawContext.beginPath()
+          this.drawArrow(this.state.lastX, this.state.lastY, currentX, currentY, this.state.drawContext)
+        }        
       }
     }
   }
@@ -198,10 +207,41 @@ class DrawableCanvas extends React.Component {
         console.log("mouse move cycle")
         this.resetCanvas(this.state.drawContext)
         this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)
+      } else if (this.props.drawingTool == DrawingTool.ARROW) {
+        console.log("draw arrow up")
+        this.resetCanvas(this.state.drawContext)
+        this.drawArrow(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)        
       }
       this.props.onMouseUp(this.saveDrawing())
     }
     this.setState({ drawing: false })
+  }
+
+  drawArrow(lX, lY, cX, cY, ctx) {
+    if (!this.state.hasDrawing) {
+      this.setState({hasDrawing: true}, () => this.props.onDrawingChanged(this.saveDrawing()))
+    }
+    this.setDrawingSettings(ctx)
+    var headlen = 3 * ctx.lineWidth;   // length of head in pixels
+    var angle = Math.atan2(cY-lY,cX-lX);
+    let dirX = cX - lX
+    let dirY = cY - lY
+    console.log(dirX)
+    console.log(dirY)
+    let length = Math.sqrt(dirX * dirX + dirY * dirY)
+    dirX /= length
+    dirY /= length
+    let perpX = dirY
+    let perpY = -dirX
+
+    ctx.moveTo(lX, lY);
+    ctx.lineTo(cX, cY);
+    ctx.lineTo(cX+2*perpX, cY+2*perpY)
+    ctx.lineTo(cX +2* dirX, cY + 2*dirY)
+    ctx.lineTo(cX-2*perpX, cY-2*perpY)    
+    ctx.lineTo(cX, cY)
+    ctx.fill();
+    ctx.stroke();
   }
 
   drawOval(lX, lY, cX, cY, ctx) {

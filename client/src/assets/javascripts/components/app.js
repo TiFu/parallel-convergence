@@ -90,8 +90,13 @@ export default class App extends React.Component {
     this.setState({drawingTool: DrawingTool.FREE})
   }
 
-  selectText = e => {
+/*  selectText = e => {
     this.setState({drawingTool: DrawingTool.TEXT})
+  }*/
+
+  selectArrow = e => {
+    console.log("SET DRAWING TOOL TO ARROw")
+    this.setState({drawingTool: DrawingTool.ARROW})
   }
 
   changeLineWidth = e => {
@@ -131,6 +136,7 @@ export default class App extends React.Component {
         </select>
         <button onClick={this.selectFree} style={ {marginLeft: "10px"}} ><i className="fa fa-pencil" aria-hidden="true"></i></button>
         <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>
+        <button onClick={this.selectArrow}><i className="fa fa-long-arrow-right" aria-hidden="true"></i></button>
         {/* TODO: setup stylesheets instead on inline CSS */}
         <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"black", width: "20px", height: "20px"}}></button>
         <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"red", width: "20px", height: "20px"}}></button>
@@ -177,6 +183,7 @@ export default class App extends React.Component {
       seconds = seconds < 10 ? "0" + seconds : seconds;
       timerHtml.push(<div key={key}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
     }
+    console.log("DRAWING TOOL: " + this.state.DrawingTool)
     let myCanvas = this.userId ?
       <DrawableCanvas
         initialDrawing={canvases[this.userId] || ""}
