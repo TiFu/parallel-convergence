@@ -76,6 +76,10 @@ function addUndoStep(imageData, roomId, userId) {
     });
 }
 
+function canUndoStep(roomId, userId) {
+    return undoLowerBound < undoUpperBound;
+}
+
 // returns image data
 function undoLast(roomId, userId) {
     // no undo step available
@@ -99,5 +103,6 @@ module.exports =  {
     joinSession: joinSession,
     draw: draw,
     undoLast: undoLast,
+    canUndoStep: canUndoStep,
     addUndoStep: addUndoStep
 }
