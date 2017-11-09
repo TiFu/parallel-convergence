@@ -15,11 +15,11 @@
 		"windows": {
 			"index": {
 				"file": "src/index.html",
-				"show_in_taskbar": true,
-				"transparent": false,
+				"show_in_taskbar": false,
+				"transparent": true,
 				"resizable": false,
 				"show_minimize": false,
-				"clickthrough": true,
+				"clickthrough": false,
 				"disable_rightclick": false,
 				"forcecapture": true,
 				"show_only_on_stream": false,
@@ -28,12 +28,12 @@
 				"disable_restore_animation": true,
 				"grab_keyboard_focus": false,
 				"size": {
-					"width": 192,
-					"height": 108
+					"width": 1920,
+					"height": 1080
 				},
 				"min_size": {
-					"width": 192,
-					"height": 108
+					"width": 1920,
+					"height": 1080
 				},
 				"max_size": {
 					"width": 1920,
@@ -43,9 +43,9 @@
 					"top": 0,
 					"left": 0
 				},
-				"topmost": false,
+				"topmost": true,
 				"block_top_window_navigation": true,
-				"keep_window_location": true,
+				"keep_window_location": false,
 				"background_optimization": true,
 				"mute": false,
 				"popup_blocker": false,
@@ -54,6 +54,11 @@
 				"is_background_page": false,
 				"focus_game_takeover": "ReleaseOnLostFocus"
 			}
+		},
+		"externally_connectable": {
+			"matches": [
+				"https://www.googleapis.com"
+			]
 		},
 		"content_scripts": [
 			{
