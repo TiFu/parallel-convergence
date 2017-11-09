@@ -398,3 +398,4 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+client/plugins/Blackbone/src/TestApp/
