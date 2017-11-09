@@ -22,13 +22,16 @@ const database = firebase.database();
 
 
 // returns {roomId: , userId }
-function joinSession(gameId, roomEventCallback, roomEventErrorCallback) {
+function joinSession(gameId) {
     return database.ref("/sessions/" + gameId).once("value").then((snapshot) => {
         var roomId = snapshot.val();
         console.log("Registered event callback for room " + roomId);
-        database.ref("/rooms/" + roomId).on("value", roomEventCallback, roomEventErrorCallback)
         return roomId
     }).then(addUserToRoom);
+}
+
+function registerDrawListeners(roomEventCallback, roomEventErrorCallback) {
+    database.ref("/rooms/" + roomId).on("value", roomEventCallback, roomEventErrorCallback)
 }
 
 function addUserToRoom(roomId) {
@@ -40,7 +43,7 @@ function addUserToRoom(roomId) {
 }
 
 function clearUndo(roomId, userId) {
-    return database.ref("/rooms/undo/" + roomId + "/" + userId).remove();
+    return database.ref("/undo/rooms/" + roomId + "/" + userId).remove();
 }
 
 // returns {roomId: , userId }
@@ -61,10 +64,10 @@ const MAX_UNDO_STEPS = 10;
 undoLowerBound = 0;
 undoUpperBound = 0; // next empty child
 function addUndoStep(imageData, roomId, userId) {
-    return database.ref("/rooms/undo/" + roomId + "/" + userId).child(undoUpperBound).set(imageData).then(() => {
+    return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound).set(imageData).then(() => {
         undoUpperBound++;
         if (undoUpperBound - undoLowerBound > MAX_UNDO_STEPS) {
-            return database.ref("/rooms/undo/" + roomId + "/" + userId).child(undoLowerBound).remove().then(() => {
+            return database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoLowerBound).remove().then(() => {
                 undoLowerBound++;
                 console.log("Upper: " + undoUpperBound + " / Lower: " + undoLowerBound)
             })
@@ -79,7 +82,7 @@ function undoLast(roomId, userId) {
     if (undoLowerBound >= undoUpperBound) {
         return Promise.reject("No undo step available");
     }
-    const undoRef = database.ref("/rooms/undo/" + roomId + "/" + userId).child(undoUpperBound - 1)
+    const undoRef = database.ref("/undo/rooms/" + roomId + "/" + userId).child(undoUpperBound - 1)
     return undoRef.once("value").then((snap) => {
         let val = snap.val();
         return undoRef.remove().then(() => {
@@ -91,6 +94,7 @@ function undoLast(roomId, userId) {
 
 module.exports =  {
     firebase: firebase,
+    registerDrawListeners: registerDrawListeners,
     createSession: createSession,
     joinSession: joinSession,
     draw: draw,
