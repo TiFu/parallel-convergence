@@ -313,7 +313,9 @@ class DrawableCanvas extends React.Component {
   canvasStyle(){
     let defaults =  this.getDefaultStyle()
     let custom = this.props.canvasStyle
-    return Object.assign({}, defaults, custom)
+    let obj = Object.assign({}, defaults, custom)
+    obj.webkitUserSelect = "none"
+    return obj
   }
 
   render() {

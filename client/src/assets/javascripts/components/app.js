@@ -470,10 +470,12 @@ export default class App extends React.Component {
       console.log("Added timer "+ this.state.timers[key]["name"] + " " + minutes + " " + seconds)
       timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds} <button onClick={() => this.handleRemoveTimer(key)}><i class="fa fa-times" aria-hidden="true"></i></button></div>)
     }
+
     this.myCanvas = this.userId ?
       <DrawableCanvas
 		canvasWidth={this.windowWidth}
-		canvasHeight={this.windowHeight}
+    canvasHeight={this.windowHeight}
+        style={{webkitUserSelect: "none"}}
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         lineWidth={this.state.lineWidth}
