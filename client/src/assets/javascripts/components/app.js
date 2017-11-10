@@ -409,7 +409,7 @@ export default class App extends React.Component {
         {this.formatButtons()}
         {this.myCanvas}
         {this.formatOtherCanvases()}
-        <div style={{"position": "absolute", "left": 0, "top": 550, "marginRight": "20px","textAlign": "right"}}>
+        <div style={{"position": "absolute", "left": 0, "top": 700, "marginRight": "20px","textAlign": "right"}}>
           <div style={{ background: "linear-gradient(0deg, #0d1f1f, #2a494c)", color: "#8f9078", width: "100%", textAlign: "left"}}>
             <h2 style={{margin: "0px", padding: "5px 5px 5px 5px"}}>Timers</h2>
           </div>
