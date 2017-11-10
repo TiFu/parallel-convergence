@@ -12,8 +12,13 @@ namespace LeagueCoachingHelperInterop {
         ~NativeProxy();
         !NativeProxy();
 
+        bool Initialize();
+
         System::Windows::Vector GetCameraPosition();
         void SetPosition(float x, float y);
+
+        float GetGameTime();
+        void SetGameTime(float time);
     private:
         replay::camera* _proxy_object;
 	};

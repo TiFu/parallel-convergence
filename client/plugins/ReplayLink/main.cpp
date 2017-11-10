@@ -24,7 +24,7 @@ namespace replay
 
 	bool connect_to_league()
 	{
-		if (attached) return;
+		if (attached) return true;
 
 		std::vector<DWORD> t_ProcessList;
 

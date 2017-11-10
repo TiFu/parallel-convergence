@@ -17,7 +17,7 @@ import {
 let ClientControl = require("ClientControl")
 
 // TODO: Make this not hardcoded
-const gameId = 11236
+const gameId = 112363666
 
 export default class App extends React.Component {
   constructor(props) {
@@ -57,7 +57,11 @@ export default class App extends React.Component {
                         if(state.val()) {
                           console.log("setting game state")
                           console.log(state.val())
-                          ClientControl.setGameState(state.val())
+                          ClientControl.setGameState(state.val(), (error) => {
+                            if(error) {
+                              console.log("error setting game state! " + error);
+                            }
+                          })
                         }
                       })
                   }

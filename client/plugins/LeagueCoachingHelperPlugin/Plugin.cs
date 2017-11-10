@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LeagueCoachingHelperInterop;
+using Newtonsoft.Json;
 
 namespace LeagueCoachingHelperPlugin
 {
@@ -18,6 +19,7 @@ namespace LeagueCoachingHelperPlugin
 
         public Plugin()
         {
+            this._nativeProxy = new NativeProxy();
         }
 
         /// <summary>
@@ -30,22 +32,25 @@ namespace LeagueCoachingHelperPlugin
         {
             if (callback == null)
             {
-                this.InitializedEvent?.Invoke("no initialize callback provided!!");
                 return;
             }
 
             Task.Run(() =>
             {
-                this._nativeProxy = new NativeProxy();
+                if (this._nativeProxy.Initialize())
+                {
+                    this._cameraPollTask = this.PollState(this._cancellationTokenSource.Token);
 
-                this._cameraPollTask = this.PollCamera(this._cancellationTokenSource.Token);
-
-                callback(null);
-                this.InitializedEvent?.Invoke(null);
+                    callback(null);
+                }
+                else
+                {
+                    callback("initialization failed!");
+                }
             });
         }
 
-        private async Task PollCamera(CancellationToken cancellationToken)
+        private async Task PollState(CancellationToken cancellationToken)
         {
             var state = new GameState();
             while (!cancellationToken.IsCancellationRequested)
@@ -53,6 +58,7 @@ namespace LeagueCoachingHelperPlugin
                 var position = this._nativeProxy.GetCameraPosition();
 
                 state.CameraLocation = new VectorThatDoesntSuck(position);
+                state.GameTime = this._nativeProxy.GetGameTime();
 
                 this.GameStateChanged?.Invoke(state);
 
@@ -69,25 +75,36 @@ namespace LeagueCoachingHelperPlugin
 
         public void SetState(object gameState, Action<object> callback)
         {
+            void HandleState(GameState state)
+            {
+                this._nativeProxy.SetPosition(state.CameraLocation.X, state.CameraLocation.Y);
+                this._nativeProxy.SetGameTime(state.GameTime);
+                callback?.Invoke(null);
+            }
+
             Task.Run(() =>
             {
                 if (gameState is GameState typedGameState)
                 {
-                    this._nativeProxy.SetPosition(typedGameState.CameraLocation.X, typedGameState.CameraLocation.Y);
-                    callback?.Invoke(null);
+                    HandleState(typedGameState);
+                    return;
                 }
-                else
+                
+                if (gameState is string gameStateString)
                 {
-                    callback?.Invoke("invalid object passed");
+                    var deserializedGameState = JsonConvert.DeserializeObject<GameState>(gameStateString);
+
+                    if (deserializedGameState != null)
+                    {
+                        HandleState(deserializedGameState);
+                        return;
+                    }
                 }
+                
+                callback?.Invoke("invalid object passed! wrong type.");
             });
         }
 
         public event Action<object> GameStateChanged;
-
-        /// <summary>
-        /// Example event. We probably wont use this ever.
-        /// </summary>
-        public event Action<object> InitializedEvent;
     }
 }
