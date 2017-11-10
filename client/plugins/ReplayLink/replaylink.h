@@ -53,6 +53,7 @@ namespace replay
 		virtual bool init() = 0;
 
 		virtual void set_time(float time) = 0;
+		virtual float get_time() = 0;
 
 	};
 
@@ -64,9 +65,11 @@ namespace replay
 
 		bool init();
 		void set_time(float time);
+		float get_time();
 
 	private:
 		uint32_t object_address = 0;
 		uint32_t set_time_address = 0;
+		uint32_t time_address = 0;
 	};
 };
