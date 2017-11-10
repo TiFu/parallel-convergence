@@ -280,7 +280,7 @@ export default class App extends React.Component {
 //      minutes = minutes < 10 ? "0" + minutes : minutes;
       let seconds = this.state.timers[key]["time"] - 60 * minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
-      timerHtml.push(<div key={key}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
+      timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
     }
     console.log("DRAWING TOOL: " + this.state.DrawingTool)
     this.myCanvas = this.userId ?
@@ -302,8 +302,13 @@ export default class App extends React.Component {
         {this.formatButtons()}
         {this.myCanvas}
         {this.formatOtherCanvases()}
-        <div style={{"position": "absolute", "left": 854, "marginRight": "20px", "textAlign": "right"}}>
+        <div style={{"position": "absolute", "left": 854, "marginRight": "20px", top:"50px", "textAlign": "right"}}>
+          <div style={{ background: "linear-gradient(0deg, #0d1f1f, #2a494c)", color: "#8f9078", width: "100%", textAlign: "left"}}>
+            <h2 style={{margin: "0px", padding: "5px 5px 5px 5px"}}>Timers</h2>
+          </div>
+          <div style={{"backgroundColor": "#121315", padding: "0px 5px 0px 5px"}}>
           {timerHtml}
+          </div>
           </div>
       </div>
     )
