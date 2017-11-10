@@ -420,8 +420,9 @@ export default class App extends React.Component {
         continue;
       }
       let remainingDuration = this.state.timers[key]["duration"] - (this.state.gameTime - this.state.timers[key]["startTime"])
+      remainingDuration = Math.round(remainingDuration)
       let minutes = Math.floor(remainingDuration / 60)
-      let seconds = Math.round(remainingDuration - 60 * minutes);
+      let seconds = remainingDuration - 60 * minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       console.log("Added timer "+ this.state.timers[key]["name"] + " " + minutes + " " + seconds)
       timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds} <button onClick={() => this.handleRemoveTimer(key)}>x</button></div>)
