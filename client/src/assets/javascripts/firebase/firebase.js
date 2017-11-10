@@ -151,7 +151,6 @@ function registerGameStateListener(roomId, listener, errorListener)    {
 }
 
 function publishGameState(roomId, state) {
-    console.log("Setting game state to " + state)
     return database.ref("/gameState/" + roomId).set(state);
 }
 

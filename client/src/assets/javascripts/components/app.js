@@ -94,8 +94,6 @@ export default class App extends React.Component {
                       console.log("setting up as owner of lobby...")
           
                       ClientControl.onGameStateChanged((state) => {
-                          console.log("sending game state to firebase")
-                          console.log(state)
                           publishGameState(ids.roomId, state);
                       })
                   }   else{

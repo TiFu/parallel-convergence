@@ -137,28 +137,13 @@ namespace replay
 
 		return t_return;
 	}
-
-    bool controls_impl::get_is_paused()
-    {
-        return false;
-    }
-
-    void controls_impl::pause()
-    {
-        
-    }
-
-    void controls_impl::resume()
-    {
-        
-    }
 }
 
-int main()
-{
-	replay::controls_impl t_camera;
-
-	t_camera.init();
-
-	t_camera.set_pause(1);
-}
+//int main()
+//{
+//	replay::controls_impl t_camera;
+//
+//	t_camera.init();
+//
+//	t_camera.set_pause(1);
+//}
