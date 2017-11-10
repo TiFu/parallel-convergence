@@ -7,12 +7,57 @@
 
 button
   cursor pointer
-  &:not(:last-child)
-    margin-right 4px
+  margin-right 4px
   padding 11px 16px
   background linear-gradient(45deg, #214a46, #1f2c29)
   border 2px solid #736737
   color #8f9078
+
+.shape-button
+  display inline-block
+  width 53px
+  height 38px
+  &:not(:last-child)
+    margin-right 4px
+  &:first-child
+    margin-left 10px
+
+.active-shape-button
+  display inline-block
+  width 58px
+  height 42px
+  box-sizing border-box
+  background-image linear-gradient(to right, #FFD700 50px, transparent 50px), linear-gradient(to bottom, #FFD700 50px, transparent 50px), linear-gradient(to right, #FFD700 50px, transparent 50px), linear-gradient(to bottom, #FFD700 50px, transparent 50px)
+  background-size 100% 5px, 5px 100%, 100% 5px, 5px 100%
+  background-repeat no-repeat
+  background-position -14px 0px, right -10.5px, 58px bottom, 0px 42px
+  animation border 5s linear infinite
+
+  &:not(:last-child)
+    margin-right 4px
+  &:first-child
+    margin-left 10px
+
+  > button
+    margin-right 2px !important
+    margin-left 2px !important
+    margin-top 2px !important
+    margin-bottom 2px !important
+
+  @keyframes border {
+    25% {
+      background-position: 58px 0px, right -10.5px, 58px bottom, 0px 42px;
+    }
+    50% {
+      background-position: 58px 0px, right 42px, 58px bottom, 0px 42px;
+    }
+    75% {
+      background-position: 58px 0px, right 42px, -14.5px bottom, 0px 42px;
+    }
+    100% {
+      background-position: 58px 0px, right 42px, -14.5px bottom, 0px -10.5px;
+    }
+  }
 
 @font-face 
     font-family LoL Display
