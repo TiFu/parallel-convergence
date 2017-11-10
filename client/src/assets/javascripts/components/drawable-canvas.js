@@ -229,7 +229,6 @@ class DrawableCanvas extends React.Component {
   drawArrow(lX, lY, cX, cY, ctx) {
     let actuallyDrawArrow = () => {
       this.setDrawingSettings(ctx)
-      var headlen = 3 * ctx.lineWidth;   // length of head in pixels
       var angle = Math.atan2(cY-lY,cX-lX);
       let dirX = cX - lX
       let dirY = cY - lY
@@ -241,14 +240,19 @@ class DrawableCanvas extends React.Component {
       let perpX = dirY
       let perpY = -dirX
   
+      let arrowSize = 10 + 3 * (this.props.lineWidth - 2)
       ctx.moveTo(lX, lY);
       ctx.lineTo(cX, cY);
-      ctx.lineTo(cX+2*perpX, cY+2*perpY)
-      ctx.lineTo(cX +2* dirX, cY + 2*dirY)
-      ctx.lineTo(cX-2*perpX, cY-2*perpY)    
+      ctx.stroke();
+      this.setDrawingSettings(ctx)
+      ctx.beginPath();
+      ctx.moveTo(cX, cY)
+      ctx.lineTo(cX+arrowSize*perpX, cY+arrowSize*perpY)
+      ctx.lineTo(cX +arrowSize* dirX, cY + arrowSize*dirY)
+      ctx.lineTo(cX-arrowSize*perpX, cY-arrowSize*perpY)    
       ctx.lineTo(cX, cY)
       ctx.fill();
-      ctx.stroke();
+//      ctx.stroke();
     }
 
     if (!this.state.hasDrawing) {
@@ -272,14 +276,14 @@ class DrawableCanvas extends React.Component {
     }
     if (!this.state.hasDrawing) {
       this.setState({hasDrawing: true}, actuallyDrawOval)
-    }
-    else {
+    } else {
       actuallyDrawOval()
     }
   }
 
   setDrawingSettings(ctx) {
     ctx.strokeStyle = this.props.brushColor
+    ctx.fillStyle = this.props.brushColor
     ctx.lineWidth = this.props.lineWidth
     console.log("Set line width: " + this.props.lineWidth)
   }
