@@ -59,8 +59,10 @@ namespace replay
 		}
 
 		set_time_address = results[0];
+
+		time_address = object_address + 0x4C;
 		return true;
-	} 
+	}
 
 	void controls_impl::set_time(float time)
 	{
@@ -68,6 +70,14 @@ namespace replay
 		decltype(set_time)::CallArguments t(reinterpret_cast<void*>(object_address), time);
 
 		set_time.Call(t);
+	}
+
+	float controls_impl::get_time()
+	{
+		float t_return = 0;
+		internal::league_process.memory().Read<float>(time_address, t_return);
+
+		return t_return;
 	}
 }
 
