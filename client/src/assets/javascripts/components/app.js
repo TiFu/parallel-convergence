@@ -32,6 +32,7 @@ export default class App extends React.Component {
     lineWidth: 4,
     timers: [],
     clickthrough: false,
+    gameTime: 0
   }
 
 
@@ -86,10 +87,13 @@ export default class App extends React.Component {
             registerDrawListeners(
               this.roomId, this.handleRoomEvent, () => console.log("SAD"), this.handleTimerEvent, () => console.log("SAD")
             )
-            
+
             ClientControl.initialize((status) => {
               if (status === undefined) {
                   console.log('successfully initialized client control')
+                  ClientControl.onGameStateChanged((state) => {
+                    handleGameTimeChanged(state.GameTime)                    
+                  });
                   if(isOwner()) {
                       console.log("setting up as owner of lobby...")
           
@@ -119,6 +123,13 @@ export default class App extends React.Component {
             })
           })
       })
+  }
+
+  handleGameTimeChanged = gameTime => {
+    if (Math.random() < 0.25) {
+      console.log("GameTime", gameTime)
+    }
+    this.setState({gameTime: gameTime})
   }
 
   handleTimerEvent = data => {
@@ -203,7 +214,7 @@ export default class App extends React.Component {
 
     console.log("Name: " + timerName)
     console.log("Duration: " + timerDuration)
-    addTimer(this.roomId, timerName, timerDuration).catch((err) => {
+    addTimer(this.roomId, timerName, timerDuration, this.state.gameTime).catch((err) => {
       console.log(err)
     })
   }
@@ -397,10 +408,14 @@ export default class App extends React.Component {
   render() {
     let { canvases } = this.state
     let timerHtml = []
+    // name: name, startTime: ingameTime, duration: durationInSeconds
     for (let key in this.state.timers) {
-      let minutes = Math.floor(this.state.timers[key]["time"] / 60)
-//      minutes = minutes < 10 ? "0" + minutes : minutes;
-      let seconds = this.state.timers[key]["time"] - 60 * minutes;
+      if ( this.state.timers[key]["startTime"] < this.state.gameTime) {
+        continue;
+      }
+      let remainingDuration = this.state.timers[key]["duration"] - (this.state.gameTime - this.state.timers[key]["startTime"])
+      let minutes = Math.floor(remainingDuration / 60)
+      let seconds = remainingDuration - 60 * minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
       timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
     }
