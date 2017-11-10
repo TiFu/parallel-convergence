@@ -132,6 +132,7 @@ export default class App extends React.Component {
   }
 
   handleMouseUp = newDrawingData => {
+    console.log("[Undo Step] Added undo step");
     addUndoStep(newDrawingData, this.roomId, this.userId)
   }
 
@@ -140,6 +141,7 @@ export default class App extends React.Component {
     canvases[this.userId] = ""
     this.setState({ canvases }, () => {
       this.handleDrawingChanged("")
+      addUndoStep("", this.roomId, this.userId)
     })
   }
 

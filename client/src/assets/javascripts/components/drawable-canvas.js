@@ -214,14 +214,15 @@ class DrawableCanvas extends React.Component {
         console.log("mouse move cycle")
         this.resetCanvas(this.state.drawContext)
         this.drawOval(lastX, lastY, currentX, currentY, this.state.context)
-        this.setState({ lastEllipse: { lastX, lastY, currentX, currentY }})
+        this.setState({ lastEllipse: { lastX, lastY, currentX, currentY }}, () => this.props.onMouseUp(this.saveDrawing()))
       } else if (this.props.drawingTool == DrawingTool.ARROW) {
         console.log("draw arrow up")
         this.resetCanvas(this.state.drawContext)
         this.drawArrow(lastX, lastY, currentX, currentY, this.state.context)
-        this.setState({ lastArrow: { lastX, lastY, currentX, currentY }})        
+        this.setState({ lastArrow: { lastX, lastY, currentX, currentY }}, () => this.props.onMouseUp(this.saveDrawing()))        
+      } else {
+        this.props.onMouseUp(this.saveDrawing())
       }
-      this.props.onMouseUp(this.saveDrawing())
     }
     this.setState({ drawing: false })
   }
