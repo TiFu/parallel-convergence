@@ -22,7 +22,7 @@ namespace replay
 		if (connect_to_league() == false)
 			return false;
 
-		std::cout << "Trying to find the pattern for the camera object..." << std::endl;
+		// std::cout << "Trying to find the pattern for the camera object..." << std::endl;
 
 		object_address = 0;
 		PatternSearch pattern("\x8B\x0D\xCC\xCC\xCC\xCC\x8B\x49\x24\xE8\xCC\xCC\xCC\xCC\x8B");
@@ -33,25 +33,25 @@ namespace replay
 		// Unable to find position offset
 		if (results.size() == 0)
 		{
-			std::cout << "Unable to find the pattern." << std::endl;
+			// std::cout << "Unable to find the pattern." << std::endl;
 			return false;
 		}
 
 		if (internal::league_process.memory().Read<uint32_t>(results[0] + 2, object_address))
 		{
-			std::cout << "Failed to read a part of the pattern." << std::endl;
+			// std::cout << "Failed to read a part of the pattern." << std::endl;
 			return false;
 		}
 
 		if (internal::league_process.memory().Read<uint32_t>(object_address, object_address))
 		{
-			std::cout << "Failed to read in the multiplayer client." << std::endl;
+			// std::cout << "Failed to read in the multiplayer client." << std::endl;
 			return false;
 		}
 
 		if (internal::league_process.memory().Read<uint32_t>(object_address + 12, object_address))
 		{
-			std::cout << "Failed to get the camera object." << std::endl;
+			// std::cout << "Failed to get the camera object." << std::endl;
 			return false;
 		}
 
@@ -63,14 +63,14 @@ namespace replay
 		vector2 t_result(0, 0);
 		if (internal::league_process.memory().Read<float>(object_address + 0x12c, t_result.x))
 		{
-			std::cout << "Failed to read x position of camera." << std::endl;
-			return vector2(-1, -1);
+			// std::cout << "Failed to read x position of camera." << std::endl;
+			return vector2(-2, -2);
 		}
 
 		if (internal::league_process.memory().Read<float>(object_address + 0x134, t_result.y))
 		{
-			std::cout << "Failed to read y position of camera." << std::endl;
-			return vector2(-1, -1);
+			// std::cout << "Failed to read y position of camera." << std::endl;
+			return vector2(-3, -3);
 		}
 
 		return t_result;
@@ -80,13 +80,13 @@ namespace replay
 	{
 		if (internal::league_process.memory().Write<float>(object_address + 0x12c, x))
 		{
-			std::cout << "Failed to write x position of camera." << std::endl;
+			// std::cout << "Failed to write x position of camera." << std::endl;
 			return;
 		}
 
 		if (internal::league_process.memory().Write<float>(object_address + 0x134, y))
 		{
-			std::cout << "Failed to write y position of camera." << std::endl;
+			// std::cout << "Failed to write y position of camera." << std::endl;
 			return;
 		}
 	}

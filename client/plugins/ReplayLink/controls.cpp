@@ -19,12 +19,14 @@ namespace replay
 
 	}
 
+	RemoteFunctionBase<double, void*, float>* set_time_func;
+
 	bool controls_impl::init()
 	{
 		if (connect_to_league() == false)
 			return false;
 
-		std::cout << "Trying to find the pattern for the control object..." << std::endl;
+		// std::cout << "Trying to find the pattern for the control object..." << std::endl;
 
 		object_address = 0;
 		PatternSearch pattern("\xA1\xCC\xCC\xCC\xCC\xC6\x45\xFC\x01\x8B\x70\x60");
@@ -35,13 +37,13 @@ namespace replay
 		// Unable to find position offset
 		if (results.size() == 0)
 		{
-			std::cout << "Unable to find the pattern." << std::endl;
+			// std::cout << "Unable to find the pattern." << std::endl;
 			return false;
 		}
 
 		if (internal::league_process.memory().Read<uint32_t>(results[0] + 1, object_address))
 		{
-			std::cout << "Failed to read a part of the pattern." << std::endl;
+			// std::cout << "Failed to read a part of the pattern." << std::endl;
 			return false;
 		}
 
@@ -54,22 +56,24 @@ namespace replay
 
 		if (results.size() == 0)
 		{
-			std::cout << "Unable to find the set time function." << std::endl;
+			// std::cout << "Unable to find the set time function." << std::endl;
 			return false;
 		}
 
 		set_time_address = results[0];
 
 		time_address = object_address + 0x4C;
+
+		if (set_time_func != nullptr)
+			delete set_time_func;
+		set_time_func = new RemoteFunctionBase<double, void*, float>(internal::league_process, set_time_address, eCalligConvention::cc_thiscall);
 		return true;
 	}
 
 	void controls_impl::set_time(float time)
 	{
-		RemoteFunctionBase<double, void*, float> set_time(internal::league_process, set_time_address, eCalligConvention::cc_thiscall);
-		decltype(set_time)::CallArguments t(reinterpret_cast<void*>(object_address), time);
-
-		set_time.Call(t);
+		RemoteFunctionBase<double, void*, float>::CallArguments t(reinterpret_cast<void*>(object_address), time);
+		set_time_func->Call(t);
 	}
 
 	float controls_impl::get_time()

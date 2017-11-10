@@ -21,7 +21,7 @@ namespace replay
 
 		std::vector<DWORD> t_ProcessList;
 
-		std::wcout << L"Waiting for '" << PROCESS_NAME << L"'." << std::endl;
+		// std::wcout << L"Waiting for '" << PROCESS_NAME << L"'." << std::endl;
 
 		// Wait for League of Legends to load
 		while (t_ProcessList.empty())
@@ -32,7 +32,7 @@ namespace replay
 
 		if (NT_SUCCESS(internal::league_process.Attach(t_ProcessList[0])) == false)
 		{
-			std::wcerr << L"Error trying to open '" << PROCESS_NAME << L"'." << std::endl;
+			// std::wcerr << L"Error trying to open '" << PROCESS_NAME << L"'." << std::endl;
 			return false;
 		}
 
