@@ -23,7 +23,19 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [] }
+	this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [] }
+
+	overwolf.windows.onMessageReceived.addListener((message)=> {
+		(function() {
+			eval(message.content);
+		}).call(this);
+	});
+
+	overwolf.windows.obtainDeclaredWindow("controls",()=>{
+		overwolf.windows.restore("controls",(result)=> {
+			console.log("Opened controls window");
+		});
+	});
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
@@ -131,14 +143,12 @@ export default class App extends React.Component {
     this.setState({drawingTool: DrawingTool.ARROW})
   }
 
-  changeLineWidth = e => {
-    console.log("New line width: " + Number.parseInt(e.target.value))
-    this.setState({lineWidth: Number.parseInt(e.target.value)})
+  changeLineWidth = width => {
+    console.log("New line width: " + width)
+    this.setState({lineWidth:width})
   }
 
-  addTimerEvent = e => {
-    let timerName = this.refs.timerName.value;
-    let duration = this.refs.timerDuration.value
+  addTimerEvent = (timerName, duration) => {
     // try to parse duration
     let splitDuration = duration.split(":")
     let timerDuration = 0
@@ -155,68 +165,8 @@ export default class App extends React.Component {
     })
   }
 
-  formatButtons() {
-    return (
-      <div className="buttons-container">
-        <button onClick={this.clearCanvas}>
-          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.undo}>
-          <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
-        </button>
-        <select onChange={this.changeLineWidth} style={{"fontFamily": "FontAwesome', Helvetica"}}>
-          <option value="2" selected={this.state.lineWidth == 2} style={ {fontSize: "12pt"} }>&#8722;</option>
-          <option value="4" selected={this.state.lineWidth == 4} style={ {fontSize: "16pt"} }>&#8722;</option>
-          <option value="6" selected={this.state.lineWidth == 6} style={ {fontSize: "20pt"} }>&#8722;</option>
-          <option value="8"  selected={this.state.lineWidth == 8} style={ {fontSize: "24pt"} }>&#8722;</option>
-          <option value="10"  selected={this.state.lineWidth == 10} style={ {fontSize: "28pt"} }>&#8722;</option>
-        </select>
-        <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
-          <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.selectOval}>
-          <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.selectArrow}>
-          <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
-        </button>
-        {/* TODO: setup stylesheets instead on inline CSS */}
-        <button
-          className="colorButton black"
-          onClick={this.switchColor.bind(null, "black")}
-        />
-        <button
-          className="colorButton red"
-          onClick={this.switchColor.bind(null, "red")}
-        />
-        <button
-          className="colorButton green"
-          onClick={this.switchColor.bind(null, "green")}
-        />
-        <button
-          className="colorButton blue"
-          onClick={this.switchColor.bind(null, "blue")}
-        />
-        <input
-          style={ {marginLeft: "20px"}}
-          ref="timerName"
-          type="text"
-          name="timerName"
-          placeholder="Timer Name"
-        />
-        <input
-          ref="timerDuration"
-          type="text"
-          name="timerDuration"
-          placeholder="Duration (mm:ss)"
-        />
-        <button onClick={this.addTimerEvent}>Add Timer</button>
-      </div>
-    )
-  }
-
-  switchColor = (color, e) => {
-    this.setState({ brushColor: color });
+  switchColor = color => {
+    this.setState({brushColor:color});
   }
 
   formatOtherCanvases() {
@@ -265,7 +215,6 @@ export default class App extends React.Component {
       // TODO: set left to canvasWidth/screenWidth
     return (
       <div className="app">
-        {this.formatButtons()}
         {myCanvas}
         {this.formatOtherCanvases()}
         <div style={{"position": "absolute", "left": 854, "marginRight": "20px", "textAlign": "right"}}>

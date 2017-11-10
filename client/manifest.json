@@ -11,9 +11,9 @@
 		"description": "Sync and annotate replays between PCs"
 	},
 	"data": {
-		"start_window": "index",
+		"start_window": "canvas",
 		"windows": {
-			"index": {
+			"canvas": {
 				"file": "src/index.html",
 				"show_in_taskbar": false,
 				"transparent": true,
@@ -53,6 +53,47 @@
 				"disable_blur": true,
 				"is_background_page": false,
 				"focus_game_takeover": "ReleaseOnLostFocus"
+			},
+			"controls": {
+				"file": "src/controls.html",
+				"show_in_taskbar": false,
+				"transparent": true,
+				"resizable": false,
+				"show_minimize": false,
+				"clickthrough": false,
+				"disable_rightclick": false,
+				"forcecapture": false,
+				"show_only_on_stream": false,
+				"ignore_keyboard_events": true,
+				"in_game_only": false,
+				"disable_restore_animation": true,
+				"grab_keyboard_focus": false,
+				"size": {
+					"width": 600,
+					"height": 100
+				},
+				"min_size": {
+					"width": 600,
+					"height": 100
+				},
+				"max_size": {
+					"width": 600,
+					"height": 100
+				},
+				"start_position": {
+					"top": 0,
+					"left": 0
+				},
+				"topmost": true,
+				"block_top_window_navigation": true,
+				"keep_window_location": false,
+				"background_optimization": true,
+				"mute": false,
+				"popup_blocker": false,
+				"show_maximize": false,
+				"disable_blur": true,
+				"is_background_page": false,
+				"focus_game_takeover": "ReleaseOnLostFocus"
 			}
 		},
 		"externally_connectable": {
@@ -63,8 +104,13 @@
 		},
 		"content_scripts": [
 			{
-				"windows": ["index"],
-				"js": ["src/public/js/index.js"]
+				"windows": ["canvas", "controls"],
+				"js": [
+					"src/public/js/index.js"
+				],
+				"css": [
+					"src/public/css/main.css"
+				]
 			}
 		],
 		"extra-objects": {
