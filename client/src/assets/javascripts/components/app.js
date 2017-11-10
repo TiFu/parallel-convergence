@@ -40,16 +40,17 @@ export default class App extends React.Component {
   overwolf.utils.getSystemInformation((systemInfo) => {
 	  for (let monitor of systemInfo.systemInfo.Monitors) {
 		  if (monitor.IsMain) {
-			overwolf.games.getRunningGameInfo((gameInfo)=>{
+			  // TODO switch this back to game sizes
+			//overwolf.games.getRunningGameInfo((gameInfo)=>{
 			  // TODO use logical width and height?
-			  this.windowWidth = gameInfo.width - 4;
-			  this.windowHeight = gameInfo.height - 70 - 4;
+			  this.windowWidth = monitor.width - 4;
+			  this.windowHeight = monitor.height - 70 - 4;
 			  overwolf.windows.getCurrentWindow((result) => {
 				  this.windowId = result.window.id;
 				  overwolf.windows.changeSize(this.windowId, this.windowWidth, this.windowHeight, () => {});
 				  overwolf.windows.changePosition(this.windowId, 2, 2, () => {});
 				});
-			});
+			//});
 			  break;
 		  }
 	  }
@@ -57,24 +58,30 @@ export default class App extends React.Component {
 
 	overwolf.settings.registerHotKey("toggle_clickthrough", (result) => {
 		if (result.status === "success") {
-			if (this.state.clickthrough) {
-				overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
-					console.log("disabled clickthrough");
-					this.myCanvas.setState({isDrawable: true});
-				});
-			} else {
-				overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
-					console.log("enabled clickthrough");
-					this.myCanvas.setState({isDrawable: false});
-				});
-      		}
-      		this.setState({clickthrough: !this.state.clickthrough})
+			this.toggleClickthrough();
 		}
 	});
   }
 
   handleGameTimeChanged = gameTime => {
-    this.setState({gameTime: gameTime})
+	this.setState({gameTime: gameTime})
+  }
+  
+  toggleClickthrough = () => {
+	if (this.state.clickthrough) {
+		overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
+			console.log("disabled clickthrough");
+			console.log(this.myCanvas);
+			this.myCanvas.setState({isDrawable: true});
+		});
+	} else {
+		overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
+			console.log("enabled clickthrough");
+			// TODO make this work
+			this.myCanvas.setState({isDrawable: false});
+		});
+	}
+	this.setState({clickthrough: !this.state.clickthrough})
   }
 
   componentDidMount() {
@@ -322,11 +329,11 @@ export default class App extends React.Component {
     )
   }
 
-  formatButtons() {
-    return this.state.clickthrough ? null : (
-      <div className="buttons-container">
-        <button onClick={this.clearCanvas}>
-          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+  formatButtonsThatAreDisabledWhenClickthroughIsOn() {
+	return (
+		<div>
+		<button onClick={this.clearCanvas}>
+    		<i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
         </button>
         <button onClick={this.undo}>
           <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
@@ -374,6 +381,15 @@ export default class App extends React.Component {
           className="timerInput"
         />
         <button onClick={this.addTimerEvent}>Add Timer</button>
+		</div>
+	);
+  }
+
+  formatButtons() {
+    return (
+      <div className="buttons-container">
+		<button onClick={this.toggleClickthrough}>PUT ICON HERE PLS</button>
+		{!this.state.clickthrough ? null : this.formatButtonsThatAreDisabledWhenClickthroughIsOn}
       </div>
     )
   }

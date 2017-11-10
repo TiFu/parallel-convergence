@@ -36,7 +36,7 @@ const defaultProps = {
   canvasStyle: {
     backgroundColor: "transparent",
     cursor: "pointer"
-  },
+  }
 }
 
 class DrawableCanvas extends React.Component {
