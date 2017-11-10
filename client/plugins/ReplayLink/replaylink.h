@@ -54,7 +54,21 @@ namespace replay
 
 		virtual bool init() = 0;
 
-		virtual vector2 get_position() = 0;
-		virtual void set_position(float x, float y) = 0;
+		virtual void set_time(float time) = 0;
+
+	};
+
+	class controls_impl 
+	{
+	public: 
+		controls_impl();
+		~controls_impl() { }
+
+		bool init();
+		void set_time(float time);
+
+	private:
+		uint32_t object_address = 0;
+		uint32_t set_time_address = 0;
 	};
 };

@@ -140,9 +140,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="controls.cpp" />
+    <ClCompile Include="league.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="league.h" />
     <ClInclude Include="replaylink.h" />
     <ClInclude Include="ReplayLinkAPI.h" />
   </ItemGroup>
