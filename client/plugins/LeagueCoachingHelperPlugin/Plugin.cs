@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using LeagueCoachingHelperInterop;
@@ -14,8 +15,12 @@ namespace LeagueCoachingHelperPlugin
         private const float TimeTolerance = 1;
 
         private const float PositionTolerance = 5;
+
+        private const int MsBetweenTimeSet = 3000;
         
         private readonly NativeProxy _nativeProxy;
+
+        private readonly Stopwatch _sinceLastTimeSet = new Stopwatch();
 
         private float _lastTime;
 
@@ -103,9 +108,12 @@ namespace LeagueCoachingHelperPlugin
                     this._nativeProxy.SetPosition(state.CameraLocation.X, state.CameraLocation.Y);
                 }
 
-                if (Math.Abs(this._lastTime - state.GameTime) > TimeTolerance)
+                if (Math.Abs(this._lastTime - state.GameTime) > TimeTolerance
+                    && this._sinceLastTimeSet.IsRunning
+                    && this._sinceLastTimeSet.ElapsedMilliseconds > MsBetweenTimeSet)
                 {
                     this._nativeProxy.SetGameTime(state.GameTime);
+                    this._sinceLastTimeSet.Reset();
                 }
 
                 if (this._lastPaused != state.IsPaused)
