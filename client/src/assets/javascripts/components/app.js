@@ -35,20 +35,22 @@ export default class App extends React.Component {
   }
 
 
+ 
 
   // Setup window
-  overwolf.utils.getSystemInformation((result) => {
-	  for (let monitor of result.systemInfo.Monitors) {
+  overwolf.utils.getSystemInformation((systemInfo) => {
+	  for (let monitor of systemInfo.systemInfo.Monitors) {
 		  if (monitor.IsMain) {
-			  let [width, height] = monitor.Resolution.split(", ");
-			  this.windowWidth = width - 4;
-			  this.windowHeight = height - 70 - 4;
-			  console.log(width, height);
+			overwolf.games.getRunningGameInfo((gameInfo)=>{
+			  // TODO use logical width and height?
+			  this.windowWidth = gameInfo.width - 4;
+			  this.windowHeight = gameInfo.height - 70 - 4;
 			  overwolf.windows.getCurrentWindow((result) => {
 				  this.windowId = result.window.id;
 				  overwolf.windows.changeSize(this.windowId, this.windowWidth, this.windowHeight, () => {});
 				  overwolf.windows.changePosition(this.windowId, 2, 2, () => {});
-			  });
+				});
+			});
 			  break;
 		  }
 	  }
@@ -333,7 +335,6 @@ export default class App extends React.Component {
         <button onClick={this.selectArrow}>
           <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
         </button>
-        {/* TODO: setup stylesheets instead on inline CSS */}
         <button
           className="colorButton black"
           onClick={this.switchColor.bind(null, "black")}
