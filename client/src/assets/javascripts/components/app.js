@@ -20,7 +20,7 @@ import {
 let ClientControl = require("ClientControl")
 
 // TODO: Make this not hardcoded
-const gameId = 112363666
+const gameId = 11236323666
 
 export default class App extends React.Component {
   constructor(props) {
@@ -324,56 +324,60 @@ export default class App extends React.Component {
 
   formatButtons() {
     return this.state.clickthrough ? null : (
-      <div className="buttons-container">
-        <button onClick={this.clearCanvas}>
-          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.undo}>
-          <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
-        </button>
-        {this.formatSelector()}
-        <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
-          <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.selectOval}>
-          <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
-        </button>
-        <button onClick={this.selectArrow}>
-          <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
-        </button>
-        <button
-          className="colorButton black"
-          onClick={this.switchColor.bind(null, "black")}
-        />
-        <button
-          className="colorButton red"
-          onClick={this.switchColor.bind(null, "red")}
-        />
-        <button
-          className="colorButton green"
-          onClick={this.switchColor.bind(null, "green")}
-        />
-        <button
-          className="colorButton blue"
-          onClick={this.switchColor.bind(null, "blue")}
-        />
-        <input
-          style={ {marginLeft: "20px", marginRight: "5px"}}
-          ref="timerName"
-          type="text"
-          name="timerName"
-          placeholder="Timer Name"
-          className="timerInput"
-        />
-        <input
-          ref="timerDuration"
-          type="text"
-          name="timerDuration"
-          placeholder="Duration (mm:ss)"
-          style={ {marginRight: "5px"}}
-          className="timerInput"
-        />
-        <button onClick={this.addTimerEvent}>Add Timer</button>
+      <div style={{position: "absolute", zIndex: "2"}}>
+        <div className="buttons-container">
+          <button onClick={this.clearCanvas}>
+            <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+          </button>
+          <button onClick={this.undo}>
+            <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
+          </button>
+          {this.formatSelector()}
+          <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
+            <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
+          </button>
+          <button onClick={this.selectOval}>
+            <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
+          </button>
+          <button onClick={this.selectArrow}>
+            <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
+          </button>
+          <button
+            className="colorButton black"
+            onClick={this.switchColor.bind(null, "black")}
+          />
+          <button
+            className="colorButton red"
+            onClick={this.switchColor.bind(null, "red")}
+          />
+          <button
+            className="colorButton green"
+            onClick={this.switchColor.bind(null, "green")}
+          />
+          <button
+            className="colorButton blue"
+            onClick={this.switchColor.bind(null, "blue")}
+          />
+        </div>
+        <div className="buttons-container">
+          <input
+            style={ {marginRight: "5px"}}
+            ref="timerName"
+            type="text"
+            name="timerName"
+            placeholder="Timer Name"
+            className="timerInput"
+          />
+          <input
+            ref="timerDuration"
+            type="text"
+            name="timerDuration"
+            placeholder="Duration (mm:ss)"
+            style={ {marginRight: "5px"}}
+            className="timerInput"
+          />
+          <button onClick={this.addTimerEvent}>Add Timer</button>
+        </div>
       </div>
     )
   }
