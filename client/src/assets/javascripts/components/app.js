@@ -202,7 +202,7 @@ export default class App extends React.Component {
           onClick={this.switchColor.bind(null, "blue")}
         />
         <input
-          style={ {marginLeft: "20px"}}
+          style={ {marginLeft: "20px", marginRight: "5px"}}
           ref="timerName"
           type="text"
           name="timerName"
@@ -213,6 +213,7 @@ export default class App extends React.Component {
           type="text"
           name="timerDuration"
           placeholder="Duration (mm:ss)"
+          style={ {marginRight: "5px"}}
         />
         <button onClick={this.addTimerEvent}>Add Timer</button>
       </div>
