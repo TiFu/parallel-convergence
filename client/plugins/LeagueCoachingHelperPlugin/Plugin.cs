@@ -10,8 +10,18 @@ namespace LeagueCoachingHelperPlugin
     public class Plugin
     {
         private const int PollRate = 40;
+
+        private const float TimeTolerance = 1;
+
+        private const float PositionTolerance = 5;
         
-        private NativeProxy _nativeProxy;
+        private readonly NativeProxy _nativeProxy;
+
+        private float _lastTime;
+
+        private float _lastX;
+
+        private float _lastY;
 
         private Task _cameraPollTask;
 
@@ -56,9 +66,14 @@ namespace LeagueCoachingHelperPlugin
             while (!cancellationToken.IsCancellationRequested)
             {
                 var position = this._nativeProxy.GetCameraPosition();
-
+                
                 state.CameraLocation = new VectorThatDoesntSuck(position);
-                state.GameTime = this._nativeProxy.GetGameTime();
+
+                this._lastX = state.CameraLocation.X;
+                this._lastY = state.CameraLocation.Y;
+
+                this._lastTime = this._nativeProxy.GetGameTime();
+                state.GameTime = this._lastTime;
 
                 this.GameStateChanged?.Invoke(state);
 
@@ -77,8 +92,17 @@ namespace LeagueCoachingHelperPlugin
         {
             void HandleState(GameState state)
             {
-                this._nativeProxy.SetPosition(state.CameraLocation.X, state.CameraLocation.Y);
-                this._nativeProxy.SetGameTime(state.GameTime);
+                if (Math.Abs(this._lastX - state.CameraLocation.X) > PositionTolerance ||
+                    Math.Abs(this._lastY - state.CameraLocation.Y) > PositionTolerance)
+                {
+                    this._nativeProxy.SetPosition(state.CameraLocation.X, state.CameraLocation.Y);
+                }
+
+                if (Math.Abs(this._lastTime - state.GameTime) > TimeTolerance)
+                {
+                    this._nativeProxy.SetGameTime(state.GameTime);
+                }
+                
                 callback?.Invoke(null);
             }
 
