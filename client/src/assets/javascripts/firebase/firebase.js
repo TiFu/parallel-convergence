@@ -58,6 +58,11 @@ function addTimer(roomId, name, durationInSeconds, ingameTime) {
     return pushRef.set({ name: name, startTime: ingameTime, duration: durationInSeconds})
 }
 
+function removeTimer(roomId, key) {
+    console.log("Firebase remove timer " + key)
+    return database.ref("/timers/rooms/" + roomId + "/" + key).remove();
+}
+
 function clearUndo(roomId, userId) {
     return database.ref("/undo/rooms/" + roomId + "/" + userId).remove().then(() => {
         return database.ref("/rooms/" + roomId + "/" + userId).once("value");
@@ -150,6 +155,7 @@ module.exports =  {
     joinSession: joinSession,
     addTimer: addTimer,
     draw: draw,
+    removeTimer: removeTimer,
     undoLast: undoLast,
     canUndoStep: canUndoStep,
     addUndoStep: addUndoStep,
