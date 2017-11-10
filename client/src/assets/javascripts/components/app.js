@@ -437,6 +437,8 @@ export default class App extends React.Component {
       otherCanvases.push(
         <DrawableCanvas
           key={key}
+          canvasWidth={this.windowWidth}
+          canvasHeight={this.windowHeight}
           initialDrawing={canvases[key]}
           isDrawable={false}
         />
