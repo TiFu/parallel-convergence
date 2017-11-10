@@ -145,7 +145,6 @@ namespace replay
 
     void controls_impl::pause()
     {
-        
     }
 
     void controls_impl::resume()
