@@ -7,6 +7,8 @@ var config = {
     databaseURL: configFile["databaseUrl"],
 };
 
+let _isOwner = false;
+
 function makeid(length) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -23,10 +25,15 @@ const database = firebase.database();
 
 // returns {roomId: , userId }
 function joinSession(gameId) {
+    console.log("joining session " + gameId)
     return database.ref("/sessions/" + gameId).once("value").then((snapshot) => {
         var roomId = snapshot.val();
+
+        if(roomId === null) {
+            return createSession(gameId);
+        }
         console.log("Registered event callback for room " + roomId);
-        return roomId
+        return roomId;
     }).then(addUserToRoom);
 }
 
@@ -82,13 +89,13 @@ function clearUndo(roomId, userId) {
         return addUndoStep(val, roomId, userId);
     })
 }
-
+        
 // returns {roomId: , userId }
 function createSession(gameId) {
+    _isOwner = true;
     const roomId =  makeid(15)
-    const ref = database.ref("/sessions").child(gameId).set(roomId).then(() => roomId);
-
-    return ref.then(addUserToRoom)
+    console.log("creating session with ID " + gameId)
+    return database.ref("/sessions").child(gameId).set(roomId).then(() => roomId);
 }
 
 function draw(str, roomId, userId) {
@@ -141,6 +148,20 @@ function undoLast(roomId, userId) {
     })
 }
 
+function registerGameStateListener(roomId, listener, errorListener)    {
+    console.log("Registering game state listener for " + roomId)
+    database.ref("/gameState/" + roomId).on("value", listener, errorListener)  
+}
+
+function publishGameState(roomId, state) {
+    console.log("Setting game state to " + state)
+    return database.ref("/gameState/" + roomId).set(state);
+}
+
+function isOwner()  {
+    return _isOwner;
+}
+
 module.exports =  {
     firebase: firebase,
     registerDrawListeners: registerDrawListeners,
@@ -150,5 +171,8 @@ module.exports =  {
     draw: draw,
     undoLast: undoLast,
     canUndoStep: canUndoStep,
-    addUndoStep: addUndoStep
+    addUndoStep: addUndoStep,
+    registerGameStateListener: registerGameStateListener,
+    publishGameState: publishGameState,
+    isOwner: isOwner
 }

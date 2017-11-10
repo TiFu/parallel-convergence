@@ -9,8 +9,12 @@ import {
   firebase,
   joinSession,
   registerDrawListeners,
+  registerGameStateListener,
+  publishGameState,
+  isOwner
 } from "firebase/firebase"
 
+let ClientControl = require("ClientControl")
 
 // TODO: Make this not hardcoded
 const gameId = 11236
@@ -32,7 +36,35 @@ export default class App extends React.Component {
             this.roomId = ids.roomId
             this.userId = ids.userId
             registerDrawListeners(
-              this.roomId, this.handleRoomEvent, () => console.log("SAD"), this.handleTimerEvent, () => console.log("SAD"))
+              this.roomId, this.handleRoomEvent, () => console.log("SAD"), this.handleTimerEvent, () => console.log("SAD")
+            )
+            
+            ClientControl.initialize((status) => {
+              if (status === undefined) {
+                  console.log('successfully initialized client control')
+                  if(isOwner()) {
+                      console.log("setting up as owner of lobby...")
+          
+                      ClientControl.onGameStateChanged((state) => {
+                          console.log("sending game state to firebase")
+                          console.log(state)
+                          publishGameState(ids.roomId, state);
+                      })
+                  }   else{
+                      console.log("setting up as client of lobby...")
+
+                      registerGameStateListener(ids.roomId, (state) => {
+                        if(state.val()) {
+                          console.log("setting game state")
+                          console.log(state.val())
+                          ClientControl.setGameState(state.val())
+                        }
+                      })
+                  }
+              }   else{
+                  console.log('failed to initialize! ' + status)
+              }
+            })
           })
       })
   }

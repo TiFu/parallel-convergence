@@ -66,6 +66,16 @@
 				"windows": ["index"],
 				"js": ["src/public/js/index.js"]
 			}
-		]
+		],
+		"extra-objects": {
+			"simple-io-plugin": {
+				"file": "src/plugins/simple-io-plugin.dll",
+				"class": "overwolf.plugins.SimpleIOPlugin"
+			},
+			"LeagueCoachingHelperPlugin": {
+				"file": "src/plugins/LeagueCoachingHelperPlugin.dll",
+				"class": "LeagueCoachingHelperPlugin.Plugin"
+			}
+		}
 	}
 }

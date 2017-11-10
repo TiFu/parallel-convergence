@@ -1,18 +1,20 @@
 // LeagueCoachingHelperInterop.h
-
 #pragma once
+
+#include <ReplayLink/replaylink.h>
 
 namespace LeagueCoachingHelperInterop {
 
 	public ref class NativeProxy
 	{
 	public:
-        NativeProxy(System::IntPtr hwnd);
+        NativeProxy();
         ~NativeProxy();
         !NativeProxy();
 
+        System::Windows::Vector GetCameraPosition();
+        void SetPosition(float x, float y);
     private:
-        /// this type should be replaced with a real object type
-        void* _proxy_object;
+        replay::camera* _proxy_object;
 	};
 }

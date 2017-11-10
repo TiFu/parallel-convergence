@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "firebase-init": "firebase init",
     "firebase-serve": "firebase serve",
-    "precompile": "NODE_ENV=production webpack -p --progress",
+    "precompile": "webpack -p --progress",
     "wds": "webpack-dev-server"
   },
   "babel": {
