@@ -322,6 +322,24 @@ export default class App extends React.Component {
     )
   }
 
+  clearAll = () => {
+      let { canvases } = this.state
+      for (let key in canvases) {
+        canvases[key] = ""
+      }
+      this.setState({ canvases }, () => {
+        this.handleAllChanged()
+        //addUndoStep("", this.roomId, this.userId)
+      })
+  }
+
+  handleAllChanged = () => {
+    for (let key in this.state.canvases) {
+      console.log("Clearing " + key)
+      draw(this.state.canvases[key], this.roomId, key)
+    }
+  }
+
   formatButtons() {
     let freeButton = (
       <button className="shape-button" onClick={this.selectFree}>
@@ -353,6 +371,11 @@ export default class App extends React.Component {
     return this.state.clickthrough ? null : (
       <div style={{position: "absolute", zIndex: "2"}}>
         <div className="buttons-container">
+        <button onClick={this.clearAll}>
+          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+        </button>
           <button onClick={this.clearCanvas}>
             <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
           </button>
