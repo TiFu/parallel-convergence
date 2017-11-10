@@ -10,6 +10,9 @@
 		"icon_gray": "IconMouseNormal.png",
 		"description": "Sync and annotate replays between PCs"
 	},
+	"permissions": [
+		"Hotkeys"
+	],
 	"data": {
 		"start_window": "index",
 		"windows": {
@@ -64,13 +67,21 @@
 		"content_scripts": [
 			{
 				"windows": ["index"],
-				"js": ["src/public/js/index.js"]
+				"js": ["src/public/js/index.js"],
+				"css": ["src/public/css/main.css"]
 			}
 		],
 		"extra-objects": {
 			"LeagueCoachingHelperPlugin": {
 				"file": "src/plugins/LeagueCoachingHelperPlugin.dll",
 				"class": "LeagueCoachingHelperPlugin.Plugin"
+			}
+		},
+		"hotkeys" : {
+			"toggle_clickthrough": {
+				"title": "Toggle Clickthrough",
+				"action-type": "custom",
+				"default": "Ctrl+F5"
 			}
 		}
 	}
