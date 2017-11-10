@@ -9,7 +9,7 @@ button
   cursor pointer
   &:not(:last-child)
     margin-right 4px
-  padding 8px 16px
+  padding 11px 16px
   background linear-gradient(45deg, #214a46, #1f2c29)
   border 2px solid #736737
   color #8f9078
@@ -45,14 +45,16 @@ button.colorButton
     background-color green
 
 .select
-  width 128px
+  width 175px
 
 .select-option
   cursor pointer
   font-family "FontAwesome, Helvetica"
-  width 128px
+  width 175px
   line-height 24px
   vertical-align middle
+  background linear-gradient(45deg, #214a46, #1f2c29)
+  color #8f9078
   &:hover
     background-color #c1e2ff
 
@@ -60,5 +62,19 @@ button.colorButton
   position relative
   top -2
   vertical-align middle
-  width 128px
+  width 175px
+  border 2px solid #736737
+  background linear-gradient(45deg, #214a46, #1f2c29)
+  color #8f9078
   line-height 24px
+
+.select-control
+  border-radius 0px
+  border-width 0px
+
+.select-input
+  height 28px
+
+.select-menu-outer > div
+  overflow-x hidden
+  overflow-y hidden
