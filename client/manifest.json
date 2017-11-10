@@ -67,8 +67,7 @@
 		"content_scripts": [
 			{
 				"windows": ["index"],
-				"js": ["src/public/js/index.js"],
-				"css": ["src/public/css/main.css"]
+				"js": ["src/public/js/index.js"]
 			}
 		],
 		"extra-objects": {
