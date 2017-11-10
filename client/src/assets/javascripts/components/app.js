@@ -323,6 +323,33 @@ export default class App extends React.Component {
   }
 
   formatButtons() {
+    let freeButton = (
+      <button className="shape-button" onClick={this.selectFree}>
+        <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
+      </button>
+    )
+    let ovalButton = (
+      <button className="shape-button" onClick={this.selectOval}>
+        <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
+      </button>
+    )
+    let arrowButton = (
+      <button className="shape-button" onClick={this.selectArrow}>
+        <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
+       </button>
+    )
+    let shapeButtons = [freeButton, ovalButton, arrowButton]
+
+    if (this.state.drawingTool === DrawingTool.FREE) {
+      shapeButtons[0] = <span className="active-shape-button">{shapeButtons[0]}</span>
+    }
+    else if (this.state.drawingTool === DrawingTool.OVAL) {
+      shapeButtons[1] = <span className="active-shape-button">{shapeButtons[1]}</span>      
+    }
+    else {
+      shapeButtons[2] = <span className="active-shape-button">{shapeButtons[2]}</span>            
+    }
+
     return this.state.clickthrough ? null : (
       <div style={{position: "absolute", zIndex: "2"}}>
         <div className="buttons-container">
@@ -333,15 +360,7 @@ export default class App extends React.Component {
             <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
           </button>
           {this.formatSelector()}
-          <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
-            <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
-          </button>
-          <button onClick={this.selectOval}>
-            <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
-          </button>
-          <button onClick={this.selectArrow}>
-            <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
-          </button>
+          <span>{shapeButtons}</span>
           <button
             className="colorButton black"
             onClick={this.switchColor.bind(null, "black")}
