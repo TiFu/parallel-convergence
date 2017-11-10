@@ -33,7 +33,7 @@ export default class App extends React.Component {
 		console.log("hotkey pressed");
 		if (status === "success") {
 			console.log("hotkey success");
-			this.state.clickthrough = !this.state.clickthrough;
+      this.setState({clickthrough: !this.state.clickthrough})
 			if(this.state.clickthrough) {
 				overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
 					console.log("disabled clickthrough");
@@ -42,8 +42,8 @@ export default class App extends React.Component {
 				overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
 					console.log("enabled clickthrough");
 				});
-			}
-			this.state.clickthrough = !this.state.clickthrough;
+      }
+      this.setState({clickthrough: !this.state.clickthrough})
 		}
 	});
   }
