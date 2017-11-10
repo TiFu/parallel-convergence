@@ -1,0 +1,32 @@
+.buttons-container
+  position absolute
+  z-index 2
+  display flex
+  flex-direction row
+  align-items center
+
+button
+  cursor pointer
+  &:not(:last-child)
+    margin-right 4px
+  padding 8px 16px
+  background linear-gradient(45deg, #214a46, #1f2c29)
+  border 2px solid #6b6957
+  color #8f9078
+
+button.colorButton
+  &.blue
+    background transparent
+    background-color blue
+
+  &.red
+    background transparent
+    background-color red
+
+  &.black
+    background transparent
+    background-color black
+
+  &.green
+    background transparent
+    background-color green

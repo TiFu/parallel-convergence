@@ -154,11 +154,16 @@ export default class App extends React.Component {
       console.log(err)
     })
   }
+
   formatButtons() {
     return (
-      <div style={{ position: "absolute", zIndex: "2" }}>
-        <button onClick={this.clearCanvas}><i className="fa fa-trash-o" aria-hidden="true"></i></button>
-        <button onClick={this.undo} ><i className="fa fa-undo" aria-hidden="true"></i></button>
+      <div className="buttons-container">
+        <button onClick={this.clearCanvas}>
+          <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
+        </button>
+        <button onClick={this.undo}>
+          <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
+        </button>
         <select onChange={this.changeLineWidth} style={{"fontFamily": "FontAwesome', Helvetica"}}>
           <option value="2" selected={this.state.lineWidth == 2} style={ {fontSize: "12pt"} }>&#8722;</option>
           <option value="4" selected={this.state.lineWidth == 4} style={ {fontSize: "16pt"} }>&#8722;</option>
@@ -166,24 +171,52 @@ export default class App extends React.Component {
           <option value="8"  selected={this.state.lineWidth == 8} style={ {fontSize: "24pt"} }>&#8722;</option>
           <option value="10"  selected={this.state.lineWidth == 10} style={ {fontSize: "28pt"} }>&#8722;</option>
         </select>
-        <button onClick={this.selectFree} style={ {marginLeft: "10px"}} ><i className="fa fa-pencil" aria-hidden="true"></i></button>
-        <button onClick={this.selectOval}><i className="fa fa-circle-o" aria-hidden="true"></i></button>
-        <button onClick={this.selectArrow}><i className="fa fa-long-arrow-right" aria-hidden="true"></i></button>
+        <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
+          <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
+        </button>
+        <button onClick={this.selectOval}>
+          <i className="fa fa-lg fa-circle-o" aria-hidden="true"></i>
+        </button>
+        <button onClick={this.selectArrow}>
+          <i className="fa fa-lg fa-long-arrow-right" aria-hidden="true"></i>
+        </button>
         {/* TODO: setup stylesheets instead on inline CSS */}
-        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"black", width: "20px", height: "20px"}}></button>
-        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"red", width: "20px", height: "20px"}}></button>
-        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"green", width: "20px", height: "20px"}}></button>
-        <button className="colorButton" onClick={this.switchColor} style={{backgroundColor:"blue", width: "20px", height: "20px"}}></button>
-        <input style={ {marginLeft: "20px"}} ref="timerName" type="text" name="timerName" placeholder="Timer Name"/>
-        <input ref="timerDuration" type="text" name="timerDuration" placeholder="Duration (mm:ss)" />
+        <button
+          className="colorButton black"
+          onClick={this.switchColor.bind(null, "black")}
+        />
+        <button
+          className="colorButton red"
+          onClick={this.switchColor.bind(null, "red")}
+        />
+        <button
+          className="colorButton green"
+          onClick={this.switchColor.bind(null, "green")}
+        />
+        <button
+          className="colorButton blue"
+          onClick={this.switchColor.bind(null, "blue")}
+        />
+        <input
+          style={ {marginLeft: "20px"}}
+          ref="timerName"
+          type="text"
+          name="timerName"
+          placeholder="Timer Name"
+        />
+        <input
+          ref="timerDuration"
+          type="text"
+          name="timerDuration"
+          placeholder="Duration (mm:ss)"
+        />
         <button onClick={this.addTimerEvent}>Add Timer</button>
       </div>
     )
   }
 
-  switchColor = e => {
-    this.setState({brushColor: e.target.style.backgroundColor});
-    // TODO indicate which color is currently selected
+  switchColor = (color, e) => {
+    this.setState({ brushColor: color });
   }
 
   formatOtherCanvases() {
