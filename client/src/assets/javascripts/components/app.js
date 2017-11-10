@@ -1,5 +1,6 @@
 import React from "react"
 import Select from "react-select"
+import PropTypes from "prop-types"
 
 import {DrawableCanvas, DrawingTool} from "components/drawable-canvas"
 import {
@@ -166,9 +167,8 @@ export default class App extends React.Component {
     this.setState({drawingTool: DrawingTool.ARROW})
   }
 
-  changeLineWidth = e => {
-    console.log("New line width: " + Number.parseInt(e.target.value))
-    this.setState({lineWidth: Number.parseInt(e.target.value)})
+  changeLineWidth = option => {
+    this.setState({ lineWidth: option.value })
   }
 
   addTimerEvent = e => {
@@ -189,6 +189,114 @@ export default class App extends React.Component {
       console.log(err)
     })
   }
+  
+  formatSelector() {
+    let options = [
+      {value: 2, label: ""},
+      {value: 4, label: ""},
+      {value: 6, label: ""},
+      {value: 8, label: ""},
+      {value: 10, label: ""},      
+    ]
+
+    let handleMouseDown = (option, onSelect, event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      onSelect(option, event)
+    }
+
+    let handleMouseEnter = (option, onFocus, event) => {
+      onFocus(option, event)
+    }
+
+    let handleMouseMove = (option, isFocused, onFocus, event) => {
+      if (isFocused) return
+      onFocus(option, event)
+    }
+
+    let SelectOption = ({ children, option, onSelect, onFocus, isFocused }) => {
+      let style = {}
+      switch (option.value) {
+        case 2:
+          style.fontSize = "12pt"
+          break
+        case 4:
+          style.fontSize = "20pt"
+          break
+        case 6:
+          style.fontSize = "32pt"
+          break
+        case 8:
+          style.fontSize = "56pt"
+          break
+        case 10:
+          style.fontSize = "72pt"
+          break
+        default:
+          throw new Error("Error no case found")
+      }
+      return (
+        <div
+          className="select-option"
+          style={style}
+          onMouseDown={handleMouseDown.bind(null, option, onSelect)}
+          onMouseEnter={handleMouseEnter.bind(null, option, onFocus)}
+          onMouseMove={handleMouseMove.bind(null, option, isFocused, onFocus)}
+        >
+          &#8722;
+          {children}
+        </div>
+      )
+    }
+    SelectOption.propTypes = {
+      children: PropTypes.node,
+      option: PropTypes.object,
+      onSelect: PropTypes.func,
+      onFocus: PropTypes.func,
+      isFocused: PropTypes.bool,
+    }
+
+    let SelectValue = ({ children, value }) => {
+      let style = {}
+      switch (value.value) {
+        case 2:
+          style.fontSize = "12pt"
+          break
+        case 4:
+          style.fontSize = "20pt"
+          break
+        case 6:
+          style.fontSize = "32pt"
+          break
+        case 8:
+          style.fontSize = "56pt"
+          break
+        case 10:
+          style.fontSize = "72pt"
+          break
+        default:
+          throw new Error("Invalid value for select value")
+      }
+      return (
+        <div className="select-value" style={style}>&#8722;{children}</div>
+      )
+    }
+
+    SelectValue.propTypes = {
+      children: PropTypes.node,
+      value: PropTypes.object,
+    }
+
+    return (
+      <Select
+        value={this.state.lineWidth}
+        options={options}
+        onChange={this.changeLineWidth}
+        optionComponent={SelectOption}
+        valueComponent={SelectValue}
+      />
+    )
+  }
 
   formatButtons() {
     return this.state.clickthrough ? null : (
@@ -199,13 +307,7 @@ export default class App extends React.Component {
         <button onClick={this.undo}>
           <i className="fa fa-lg fa-undo" aria-hidden="true"></i>
         </button>
-        <select onChange={this.changeLineWidth} style={{"fontFamily": "FontAwesome', Helvetica"}}>
-          <option value="2" selected={this.state.lineWidth == 2} style={ {fontSize: "12pt"} }>&#8722;</option>
-          <option value="4" selected={this.state.lineWidth == 4} style={ {fontSize: "16pt"} }>&#8722;</option>
-          <option value="6" selected={this.state.lineWidth == 6} style={ {fontSize: "20pt"} }>&#8722;</option>
-          <option value="8"  selected={this.state.lineWidth == 8} style={ {fontSize: "24pt"} }>&#8722;</option>
-          <option value="10"  selected={this.state.lineWidth == 10} style={ {fontSize: "28pt"} }>&#8722;</option>
-        </select>
+        {this.formatSelector()}
         <button onClick={this.selectFree} style={ {marginLeft: "10px"}} >
           <i className="fa fa-lg fa-pencil" aria-hidden="true"></i>
         </button>
@@ -277,7 +379,6 @@ export default class App extends React.Component {
     let { canvases } = this.state
     let timerHtml = []
     for (let key in this.state.timers) {
-      console.log(this.state.timers[key])
       let minutes = Math.floor(this.state.timers[key]["time"] / 60)
 //      minutes = minutes < 10 ? "0" + minutes : minutes;
       let seconds = this.state.timers[key]["time"] - 60 * minutes;

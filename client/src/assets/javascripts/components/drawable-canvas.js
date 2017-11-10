@@ -105,8 +105,6 @@ class DrawableCanvas extends React.Component {
     let { canvas } = this.state
     let { initialDrawing } = this.props
 
-    console.log("Next Props: ", nextProps)
-
     if (
       initialDrawing !== nextProps.initialDrawing &&
       canvas.toDataURL() !== nextProps.initialDrawing &&
