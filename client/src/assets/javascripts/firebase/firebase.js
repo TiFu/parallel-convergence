@@ -51,30 +51,16 @@ function addUserToRoom(roomId) {
     });
 }
 
-let intervals = {}
-
-function addTimer(roomId, name, durationInSeconds) {
+function addTimer(roomId, name, durationInSeconds, ingameTime) {
+    console.log("Adding timer " + roomId + ", " + name + " duration: " + durationInSeconds + ", gameTime: " + ingameTime)
     let pushRef = database.ref("/timers/rooms/" + roomId).push()
     const key = pushRef.key;
-    return pushRef.set({ name: name, time: durationInSeconds}).then(() => {
-        intervals[key] = setInterval(() => {
-            database.ref("/timers/rooms/" + roomId + "/" + key).once("value").then((snap) => {
-                if (snap.val()["time"] - 1 == -1) {
-                    clearInterval(intervals[key])
-                    removeTimer(roomId, key)
-                } else {
-                    updateTimer(roomId, key, name, snap.val()["time"] - 1)
-                }
-            })
-        }, 1000)
-    })
+    return pushRef.set({ name: name, startTime: ingameTime, duration: durationInSeconds})
 }
 
 function removeTimer(roomId, key) {
+    console.log("Firebase remove timer " + key)
     return database.ref("/timers/rooms/" + roomId + "/" + key).remove();
-}
-function updateTimer(roomId, key, name, remainingDuration) {
-    return database.ref("/timers/rooms/" + roomId + "/" + key).set({ name: name, time: remainingDuration})
 }
 
 function clearUndo(roomId, userId) {
@@ -165,6 +151,7 @@ module.exports =  {
     joinSession: joinSession,
     addTimer: addTimer,
     draw: draw,
+    removeTimer: removeTimer,
     undoLast: undoLast,
     canUndoStep: canUndoStep,
     addUndoStep: addUndoStep,

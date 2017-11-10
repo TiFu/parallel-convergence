@@ -6,6 +6,7 @@ import {DrawableCanvas, DrawingTool} from "components/drawable-canvas"
 import {
   addUndoStep,
   undoLast,
+  removeTimer,
   addTimer,
   draw,
   firebase,
@@ -32,6 +33,7 @@ export default class App extends React.Component {
     lineWidth: 4,
     timers: [],
     clickthrough: false,
+    gameTime: 0
   }
 
 
@@ -73,6 +75,11 @@ export default class App extends React.Component {
 		}
 	});
   }
+
+  handleGameTimeChanged = gameTime => {
+    this.setState({gameTime: gameTime})
+  }
+
   componentDidMount() {
     firebase.auth().signInAnonymously()
       .catch(error => {
@@ -86,10 +93,13 @@ export default class App extends React.Component {
             registerDrawListeners(
               this.roomId, this.handleRoomEvent, () => console.log("SAD"), this.handleTimerEvent, () => console.log("SAD")
             )
-            
+
             ClientControl.initialize((status) => {
               if (status === undefined) {
                   console.log('successfully initialized client control')
+                  ClientControl.onGameStateChanged((state) => {
+                    this.handleGameTimeChanged(state.GameTime)                    
+                  });
                   if(isOwner()) {
                       console.log("setting up as owner of lobby...")
           
@@ -118,6 +128,7 @@ export default class App extends React.Component {
           })
       })
   }
+
 
   handleTimerEvent = data => {
     if (!data.val()) {
@@ -201,7 +212,7 @@ export default class App extends React.Component {
 
     console.log("Name: " + timerName)
     console.log("Duration: " + timerDuration)
-    addTimer(this.roomId, timerName, timerDuration).catch((err) => {
+    addTimer(this.roomId, timerName, timerDuration, this.state.gameTime).catch((err) => {
       console.log(err)
     })
   }
@@ -392,15 +403,27 @@ export default class App extends React.Component {
     return otherCanvases
   }
 
+  handleRemoveTimer(key) {
+    console.log("Remove timer " + key)
+    removeTimer(this.roomId, key)
+  }
+
   render() {
     let { canvases } = this.state
     let timerHtml = []
+    // name: name, startTime: ingameTime, duration: durationInSeconds
     for (let key in this.state.timers) {
-      let minutes = Math.floor(this.state.timers[key]["time"] / 60)
-//      minutes = minutes < 10 ? "0" + minutes : minutes;
-      let seconds = this.state.timers[key]["time"] - 60 * minutes;
+      if ( this.state.timers[key]["startTime"] + this.state.timers[key]["duration"] < this.state.gameTime) {
+        console.log("Skipping timer " + this.state.timers[key]["name"])
+        continue;
+      }
+      let remainingDuration = this.state.timers[key]["duration"] - (this.state.gameTime - this.state.timers[key]["startTime"])
+      remainingDuration = Math.round(remainingDuration)
+      let minutes = Math.floor(remainingDuration / 60)
+      let seconds = remainingDuration - 60 * minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
-      timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
+      console.log("Added timer "+ this.state.timers[key]["name"] + " " + minutes + " " + seconds)
+      timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds} <button onClick={() => this.handleRemoveTimer(key)}><i class="fa fa-times" aria-hidden="true"></i></button></div>)
     }
 	console.log("DRAWING TOOL: " + this.state.DrawingTool)
     this.myCanvas = this.userId ?
@@ -424,7 +447,7 @@ export default class App extends React.Component {
         {this.formatButtons()}
         {this.myCanvas}
         {this.formatOtherCanvases()}
-        <div style={{"position": "absolute", "left": 0, "top": 700, "marginRight": "20px","textAlign": "right"}}>
+        <div style={{"position": "absolute", "left": 0, "top": 700, "marginRight": "20px","textAlign": "right", zIndex: 3}}>
           <div style={{ background: "linear-gradient(0deg, #0d1f1f, #2a494c)", color: "#8f9078", width: "100%", textAlign: "left"}}>
             <h2 style={{margin: "0px", padding: "5px 5px 5px 5px"}}>Timers</h2>
           </div>
