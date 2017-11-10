@@ -33,12 +33,26 @@ export default class App extends React.Component {
     timers: [],
     clickthrough: false,
   }
-	
-	overwolf.windows.getCurrentWindow((result) => {
-		this.windowId = result.window.id;
-		this.windowWidth = result.window.width;
-		this.windowHeight = result.window.height;
-	});
+
+
+
+  // Setup window
+  overwolf.utils.getSystemInformation((result) => {
+	  for (let monitor of result.systemInfo.Monitors) {
+		  if (monitor.IsMain) {
+			  let [width, height] = monitor.Resolution.split(", ");
+			  this.windowWidth = width - 4;
+			  this.windowHeight = height - 4;
+			  console.log(width, height);
+			  overwolf.windows.getCurrentWindow((result) => {
+				  this.windowId = result.window.id;
+				  overwolf.windows.changeSize(this.windowId, this.windowWidth, this.windowHeight, () => {});
+				  overwolf.windows.changePosition(this.windowId, 2, 2, () => {});
+			  });
+			  break;
+		  }
+	  }
+  });
 
 	overwolf.settings.registerHotKey("toggle_clickthrough", (result) => {
 		if (result.status === "success") {
@@ -391,7 +405,7 @@ export default class App extends React.Component {
     this.myCanvas = this.userId ?
       <DrawableCanvas
 		canvasWidth={this.windowWidth}
-		canvasHeight={this.windowHeight-80}
+		canvasHeight={this.windowHeight - 80}
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         lineWidth={this.state.lineWidth}
