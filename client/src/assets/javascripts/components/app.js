@@ -189,7 +189,7 @@ export default class App extends React.Component {
   }
 
   formatButtons() {
-    return (
+    return this.state.clickthrough ? null : (
       <div className="buttons-container">
         <button onClick={this.clearCanvas}>
           <i className="fa fa-lg fa-trash-o" aria-hidden="true"></i>
