@@ -23,7 +23,29 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [] }
+	this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [], clickthrough: false }
+	
+	overwolf.windows.getCurrentWindow((result) => {
+		this.windowId = result.window.id;
+	});
+
+	overwolf.settings.registerHotKey("toggle_clickthrough", (status) =>{
+		console.log("hotkey pressed");
+		if (status === "success") {
+			console.log("hotkey success");
+			this.state.clickthrough = !this.state.clickthrough;
+			if(this.state.clickthrough) {
+				overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
+					console.log("disabled clickthrough");
+				});
+			}else {
+				overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
+					console.log("enabled clickthrough");
+				});
+			}
+			this.state.clickthrough = !this.state.clickthrough;
+		}
+	});
   }
   componentDidMount() {
     firebase.auth().signInAnonymously()
