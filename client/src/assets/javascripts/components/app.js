@@ -36,6 +36,8 @@ export default class App extends React.Component {
 	
 	overwolf.windows.getCurrentWindow((result) => {
 		this.windowId = result.window.id;
+		this.windowWidth = result.window.width;
+		this.windowHeight = result.window.height;
 	});
 
 	overwolf.settings.registerHotKey("toggle_clickthrough", (result) => {
@@ -385,9 +387,11 @@ export default class App extends React.Component {
       seconds = seconds < 10 ? "0" + seconds : seconds;
       timerHtml.push(<div key={key} style={{fontSize: "20pt", color: "#8f9078"}}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
     }
-    console.log("DRAWING TOOL: " + this.state.DrawingTool)
+	console.log("DRAWING TOOL: " + this.state.DrawingTool)
     this.myCanvas = this.userId ?
       <DrawableCanvas
+		canvasWidth={this.windowWidth}
+		canvasHeight={this.windowHeight-80}
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         lineWidth={this.state.lineWidth}
