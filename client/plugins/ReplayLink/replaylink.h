@@ -59,15 +59,15 @@ namespace replay
 
 	};
 
-	class controls_impl 
+	class REPLAYLINK_API controls_impl : public controls
 	{
 	public: 
 		controls_impl();
 		~controls_impl() { }
 
-		bool init();
-		void set_time(float time);
-		float get_time();
+		bool init() override;
+		void set_time(float time) override;
+		float get_time() override;
 
 	private:
 		uint32_t object_address = 0;

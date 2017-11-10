@@ -20,6 +20,7 @@ namespace LeagueCoachingHelperInterop {
         float GetGameTime();
         void SetGameTime(float time);
     private:
-        replay::camera* _proxy_object;
+        replay::camera* _camera_proxy;
+        replay::controls* _controls_proxy;
 	};
 }

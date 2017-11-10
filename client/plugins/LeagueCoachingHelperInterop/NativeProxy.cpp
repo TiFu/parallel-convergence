@@ -8,7 +8,8 @@ using LeagueCoachingHelperInterop::NativeProxy;
 
 NativeProxy::NativeProxy()
 {
-    this->_proxy_object = new replay::camera_impl;
+    this->_camera_proxy = new replay::camera_impl;
+    this->_controls_proxy = new replay::controls_impl;
 }
 
 NativeProxy::~NativeProxy()
@@ -18,19 +19,18 @@ NativeProxy::~NativeProxy()
 
 NativeProxy::!NativeProxy()
 {
-    delete this->_proxy_object;
+    delete this->_camera_proxy;
+    delete this->_controls_proxy;
 }
 
 bool NativeProxy::Initialize()
 {
-    return this->_proxy_object->init();
+    return this->_camera_proxy->init() && this->_controls_proxy->init();
 }
 
 System::Windows::Vector NativeProxy::GetCameraPosition()
 {
-    auto vec = this->_proxy_object->get_position();
-
-    //auto vec = replay::vector2(rand() % 1000, rand() % 1000);
+    auto vec = this->_camera_proxy->get_position();
 
     System::Windows::Vector ret(vec.x, vec.y);
 
@@ -39,15 +39,15 @@ System::Windows::Vector NativeProxy::GetCameraPosition()
 
 void NativeProxy::SetPosition(float x, float y)
 {
-    this->_proxy_object->set_position(x, y);
+    this->_camera_proxy->set_position(x, y);
 }
 
 float NativeProxy::GetGameTime()
 {
-    return 50;
+    return this->_controls_proxy->get_time();
 }
 
 void NativeProxy::SetGameTime(float time)
 {
-    
+    this->_controls_proxy->set_time(time);
 }
