@@ -51,6 +51,8 @@ class DrawableCanvas extends React.Component {
       hasDrawing: false,
       lastX: 0,
       lastY: 0,
+      lastEllipse: null,
+      lastArrow: null,
     }
   }
 
@@ -130,9 +132,13 @@ class DrawableCanvas extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let { hasDrawing, lastX, lastY } = this.state
+    let { hasDrawing, lastX, lastY, lastEllipse, lastArrow } = this.state
     if (this.state.hasDrawing &&
-        (prevState.lastX !== lastX || prevState.lastY !== lastY)) {
+        (prevState.lastX !== lastX ||
+         prevState.lastY !== lastY ||
+         prevState.lastEllipse !== lastEllipse ||
+         prevState.lastArrow !== lastArrow)
+    ) {
       this.props.onDrawingChanged(this.saveDrawing())
     }
   }
@@ -199,6 +205,7 @@ class DrawableCanvas extends React.Component {
   }
 
   handleOnMouseUp = e =>{
+    let { lastX, lastY } = this.state
     if (this.state.drawing) {
       let rect = this.state.canvas.getBoundingClientRect()
       let currentX = e.clientX - rect.left
@@ -206,11 +213,13 @@ class DrawableCanvas extends React.Component {
       if (this.props.drawingTool == DrawingTool.OVAL) {
         console.log("mouse move cycle")
         this.resetCanvas(this.state.drawContext)
-        this.drawOval(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)
+        this.drawOval(lastX, lastY, currentX, currentY, this.state.context)
+        this.setState({ lastEllipse: { lastX, lastY, currentX, currentY }})
       } else if (this.props.drawingTool == DrawingTool.ARROW) {
         console.log("draw arrow up")
         this.resetCanvas(this.state.drawContext)
-        this.drawArrow(this.state.lastX, this.state.lastY, currentX, currentY, this.state.context)        
+        this.drawArrow(lastX, lastY, currentX, currentY, this.state.context)
+        this.setState({ lastArrow: { lastX, lastY, currentX, currentY }})        
       }
       this.props.onMouseUp(this.saveDrawing())
     }
@@ -218,46 +227,55 @@ class DrawableCanvas extends React.Component {
   }
 
   drawArrow(lX, lY, cX, cY, ctx) {
-    if (!this.state.hasDrawing) {
-      this.setState({hasDrawing: true}, () => this.props.onDrawingChanged(this.saveDrawing()))
+    let actuallyDrawArrow = () => {
+      this.setDrawingSettings(ctx)
+      var headlen = 3 * ctx.lineWidth;   // length of head in pixels
+      var angle = Math.atan2(cY-lY,cX-lX);
+      let dirX = cX - lX
+      let dirY = cY - lY
+      console.log(dirX)
+      console.log(dirY)
+      let length = Math.sqrt(dirX * dirX + dirY * dirY)
+      dirX /= length
+      dirY /= length
+      let perpX = dirY
+      let perpY = -dirX
+  
+      ctx.moveTo(lX, lY);
+      ctx.lineTo(cX, cY);
+      ctx.lineTo(cX+2*perpX, cY+2*perpY)
+      ctx.lineTo(cX +2* dirX, cY + 2*dirY)
+      ctx.lineTo(cX-2*perpX, cY-2*perpY)    
+      ctx.lineTo(cX, cY)
+      ctx.fill();
+      ctx.stroke();
     }
-    this.setDrawingSettings(ctx)
-    var headlen = 3 * ctx.lineWidth;   // length of head in pixels
-    var angle = Math.atan2(cY-lY,cX-lX);
-    let dirX = cX - lX
-    let dirY = cY - lY
-    console.log(dirX)
-    console.log(dirY)
-    let length = Math.sqrt(dirX * dirX + dirY * dirY)
-    dirX /= length
-    dirY /= length
-    let perpX = dirY
-    let perpY = -dirX
 
-    ctx.moveTo(lX, lY);
-    ctx.lineTo(cX, cY);
-    ctx.lineTo(cX+2*perpX, cY+2*perpY)
-    ctx.lineTo(cX +2* dirX, cY + 2*dirY)
-    ctx.lineTo(cX-2*perpX, cY-2*perpY)    
-    ctx.lineTo(cX, cY)
-    ctx.fill();
-    ctx.stroke();
+    if (!this.state.hasDrawing) {
+      this.setState({hasDrawing: true}, actuallyDrawArrow)
+    } else {
+      actuallyDrawArrow()
+    }
   }
 
   drawOval(lX, lY, cX, cY, ctx) {
-    if (!this.state.hasDrawing) {
-      this.setState({hasDrawing: true}, () => this.props.onDrawingChanged(this.saveDrawing()))
+    let actuallyDrawOval = () => {
+      this.setDrawingSettings(ctx)
+      let radX = -(lX - cX) / 2
+      let radY = -(lY - cY) / 2
+      let centerX = Math.abs(lX + radX)
+      let centerY = Math.abs(lY + radY)
+      radX = Math.abs(radX)
+      radY = Math.abs(radY)
+      ctx.ellipse(centerX, centerY, radX, radY, 0, 0, 2 * Math.PI)
+      ctx.stroke();
     }
-    console.log("Drawing oval on ", ctx)
-    this.setDrawingSettings(ctx)
-    let radX = -(lX - cX) / 2
-    let radY = -(lY - cY) / 2
-    let centerX = Math.abs(lX + radX)
-    let centerY = Math.abs(lY + radY)
-    radX = Math.abs(radX)
-    radY = Math.abs(radY)
-    ctx.ellipse(centerX, centerY, radX, radY, 0, 0, 2 * Math.PI)
-    ctx.stroke();
+    if (!this.state.hasDrawing) {
+      this.setState({hasDrawing: true}, actuallyDrawOval)
+    }
+    else {
+      actuallyDrawOval()
+    }
   }
 
   setDrawingSettings(ctx) {
@@ -279,7 +297,9 @@ class DrawableCanvas extends React.Component {
     let width = context.canvas.width
     let height = context.canvas.height
     context.clearRect(0, 0, width, height)
-    this.setState({ hasDrawing: false }, callback)
+    if (context === this.state.context) {
+      this.setState({ hasDrawing: false }, callback)      
+    }
   }
 
   getDefaultStyle(){

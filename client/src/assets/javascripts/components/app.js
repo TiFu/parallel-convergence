@@ -1,4 +1,5 @@
 import React from "react"
+import Select from "react-select"
 
 import {DrawableCanvas, DrawingTool} from "components/drawable-canvas"
 import {
@@ -23,7 +24,14 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-	this.state = { initialDrawing: "", canvases: {}, drawingTool: DrawingTool.FREE, lineWidth: 4, timers: [], clickthrough: false }
+	this.state = {
+    initialDrawing: "",
+    canvases: {},
+    drawingTool: DrawingTool.FREE,
+    lineWidth: 4,
+    timers: [],
+    clickthrough: false,
+  }
 	
 	overwolf.windows.getCurrentWindow((result) => {
 		this.windowId = result.window.id;
