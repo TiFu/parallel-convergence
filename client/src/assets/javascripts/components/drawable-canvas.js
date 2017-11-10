@@ -139,6 +139,13 @@ class DrawableCanvas extends React.Component {
     ) {
       this.props.onDrawingChanged(this.saveDrawing())
     }
+
+    if (this.props.isDrawable && prevProps.isDrawable !== this.props.isDrawable) {
+      this.refs.drawCanvas.width = this.props.canvasWidth
+      this.refs.drawCanvas.height = this.props.canvasHeight
+      let displayCtx = this.refs.drawCanvas.getContext("2d")
+      this.setState({ drawContext: displayCtx })
+    }
   }
 
   saveDrawing = () => {
@@ -322,17 +329,18 @@ class DrawableCanvas extends React.Component {
   render() {
     let drawCanvas = null
     if (this.props.isDrawable) {
-      drawCanvas = <canvas ref="drawCanvas"
-      style={this.canvasStyle()}
-      onMouseDown={this.handleOnMouseDown} 
-      onTouchStart={this.handleOnMouseDown}
-      onMouseMove={this.handleOnMouseMove}
-      onTouchMove={this.handleOnMouseMove}
-      onMouseUp={this.handleOnMouseUp}
-      onTouchEnd={this.handleOnMouseUp}
-      className="drawable-canvas display"
-    />
-
+      drawCanvas = (
+        <canvas ref="drawCanvas"
+          style={this.canvasStyle()}
+          onMouseDown={this.handleOnMouseDown} 
+          onTouchStart={this.handleOnMouseDown}
+          onMouseMove={this.handleOnMouseMove}
+          onTouchMove={this.handleOnMouseMove}
+          onMouseUp={this.handleOnMouseUp}
+          onTouchEnd={this.handleOnMouseUp}
+          className="drawable-canvas display"
+        />
+      )
     }
     return (
       <div>
