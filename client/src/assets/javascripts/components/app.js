@@ -356,6 +356,7 @@ export default class App extends React.Component {
           type="text"
           name="timerName"
           placeholder="Timer Name"
+          className="timerInput"
         />
         <input
           ref="timerDuration"
@@ -363,6 +364,7 @@ export default class App extends React.Component {
           name="timerDuration"
           placeholder="Duration (mm:ss)"
           style={ {marginRight: "5px"}}
+          className="timerInput"
         />
         <button onClick={this.addTimerEvent}>Add Timer</button>
       </div>
