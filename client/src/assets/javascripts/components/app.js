@@ -42,7 +42,7 @@ export default class App extends React.Component {
 		  if (monitor.IsMain) {
 			  let [width, height] = monitor.Resolution.split(", ");
 			  this.windowWidth = width - 4;
-			  this.windowHeight = height - 4;
+			  this.windowHeight = height - 70 - 4;
 			  console.log(width, height);
 			  overwolf.windows.getCurrentWindow((result) => {
 				  this.windowId = result.window.id;
@@ -407,7 +407,7 @@ export default class App extends React.Component {
     this.myCanvas = this.userId ?
       <DrawableCanvas
 		canvasWidth={this.windowWidth}
-		canvasHeight={this.windowHeight - 80}
+		canvasHeight={this.windowHeight}
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         lineWidth={this.state.lineWidth}

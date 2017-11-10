@@ -116,8 +116,6 @@ class DrawableCanvas extends React.Component {
           this.resetCanvas(this.state.drawContext)
       }
       else {
-        console.log(canvas.toDataURL().length)
-        console.log(nextProps.initialDrawing.length)
         if (canvas.toDataURL().length > nextProps.initialDrawing.length) {
           let withClear = true
           this.drawImageOnCanvas(nextProps.initialDrawing, withClear)
@@ -181,16 +179,13 @@ class DrawableCanvas extends React.Component {
 
       currentX = e.clientX - rect.left
       currentY = e.clientY - rect.top
-      console.log("mouse moved with drawing tool " + this.props.drawingTool)
       if (this.props.drawingTool == DrawingTool.FREE) {
-        console.log("Mouse move free")
         this.draw(lastX, lastY, currentX, currentY)
         this.setState({
           lastX: currentX,
           lastY: currentY
         })
       } else if (this.props.drawingTool == DrawingTool.OVAL) {
-        console.log("move oval")
         if (this.props.isDrawable) {
           console.log("DRAWING OVAL ON DRAW CANVAS")
           this.resetCanvas(this.state.drawContext)
@@ -216,12 +211,10 @@ class DrawableCanvas extends React.Component {
       let currentX = e.clientX - rect.left
       let currentY = e.clientY - rect.top
       if (this.props.drawingTool == DrawingTool.OVAL) {
-        console.log("mouse move cycle")
         this.resetCanvas(this.state.drawContext)
         this.drawOval(lastX, lastY, currentX, currentY, this.state.context)
         this.setState({ lastEllipse: { lastX, lastY, currentX, currentY }}, () => this.props.onMouseUp(this.saveDrawing()))
       } else if (this.props.drawingTool == DrawingTool.ARROW) {
-        console.log("draw arrow up")
         this.resetCanvas(this.state.drawContext)
         this.drawArrow(lastX, lastY, currentX, currentY, this.state.context)
         this.setState({ lastArrow: { lastX, lastY, currentX, currentY }}, () => this.props.onMouseUp(this.saveDrawing()))        
@@ -238,8 +231,6 @@ class DrawableCanvas extends React.Component {
       var angle = Math.atan2(cY-lY,cX-lX);
       let dirX = cX - lX
       let dirY = cY - lY
-      console.log(dirX)
-      console.log(dirY)
       let length = Math.sqrt(dirX * dirX + dirY * dirY)
       dirX /= length
       dirY /= length
@@ -291,7 +282,6 @@ class DrawableCanvas extends React.Component {
     ctx.strokeStyle = this.props.brushColor
     ctx.fillStyle = this.props.brushColor
     ctx.lineWidth = this.props.lineWidth
-    console.log("Set line width: " + this.props.lineWidth)
   }
   draw(lX, lY, cX, cY){
     if (!this.state.hasDrawing) {

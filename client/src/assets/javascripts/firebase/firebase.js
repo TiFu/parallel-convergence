@@ -85,7 +85,6 @@ function clearUndo(roomId, userId) {
         if (val == null) {
             val = "";
         }
-        console.log("Setting value: ", val)
         return addUndoStep(val, roomId, userId);
     })
 }
@@ -99,9 +98,7 @@ function createSession(gameId) {
 }
 
 function draw(str, roomId, userId) {
-    return database.ref("/rooms/" + roomId + "/" + userId).set(str).then(() => {
-        console.log("Added " + str + " to " + roomId)
-    })
+    return database.ref("/rooms/" + roomId + "/" + userId).set(str).then(() => {})
 }
 
 const MAX_UNDO_STEPS = 10;
