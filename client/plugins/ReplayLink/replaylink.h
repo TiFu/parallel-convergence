@@ -57,6 +57,9 @@ namespace replay
 		virtual void set_time(float time) = 0;
 		virtual float get_time() = 0;
 
+        virtual bool get_is_paused() = 0;
+        virtual void pause() = 0;
+        virtual void resume() = 0;
 	};
 
 	class REPLAYLINK_API controls_impl : public controls
@@ -69,6 +72,9 @@ namespace replay
 		void set_time(float time) override;
 		float get_time() override;
 
+        bool get_is_paused() override;
+        void pause() override;
+        void resume() override;
 	private:
 		uint32_t object_address = 0;
 		uint32_t set_time_address = 0;

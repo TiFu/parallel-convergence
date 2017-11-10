@@ -51,3 +51,18 @@ void NativeProxy::SetGameTime(float time)
 {
     this->_controls_proxy->set_time(time);
 }
+
+bool NativeProxy::GetIsPaused()
+{
+    return this->_controls_proxy->get_is_paused();
+}
+
+void NativeProxy::Pause()
+{
+    this->_controls_proxy->pause();
+}
+
+void NativeProxy::Resume()
+{
+    this->_controls_proxy->resume();
+}

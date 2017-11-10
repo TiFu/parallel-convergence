@@ -19,6 +19,10 @@ namespace LeagueCoachingHelperInterop {
 
         float GetGameTime();
         void SetGameTime(float time);
+
+        bool GetIsPaused();
+        void Pause();
+        void Resume();
     private:
         replay::camera* _camera_proxy;
         replay::controls* _controls_proxy;

@@ -83,6 +83,21 @@ namespace replay
 
 		return t_return;
 	}
+
+    bool controls_impl::get_is_paused()
+    {
+        return false;
+    }
+
+    void controls_impl::pause()
+    {
+        
+    }
+
+    void controls_impl::resume()
+    {
+        
+    }
 }
 
 int main()

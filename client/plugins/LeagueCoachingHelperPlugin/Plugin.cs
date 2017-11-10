@@ -23,6 +23,8 @@ namespace LeagueCoachingHelperPlugin
 
         private float _lastY;
 
+        private bool _lastPaused;
+
         private Task _cameraPollTask;
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -75,6 +77,9 @@ namespace LeagueCoachingHelperPlugin
                 this._lastTime = this._nativeProxy.GetGameTime();
                 state.GameTime = this._lastTime;
 
+                this._lastPaused = this._nativeProxy.GetIsPaused();
+                state.IsPaused = this._lastPaused;
+
                 this.GameStateChanged?.Invoke(state);
 
                 try
@@ -101,6 +106,18 @@ namespace LeagueCoachingHelperPlugin
                 if (Math.Abs(this._lastTime - state.GameTime) > TimeTolerance)
                 {
                     this._nativeProxy.SetGameTime(state.GameTime);
+                }
+
+                if (this._lastPaused != state.IsPaused)
+                {
+                    if (state.IsPaused)
+                    {
+                        this._nativeProxy.Pause();
+                    }
+                    else
+                    {
+                        this._nativeProxy.Resume();
+                    }
                 }
                 
                 callback?.Invoke(null);
