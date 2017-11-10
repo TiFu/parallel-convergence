@@ -24,7 +24,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props)
 
-	this.state = {
+  this.state = {
     initialDrawing: "",
     canvases: {},
     drawingTool: DrawingTool.FREE,
@@ -37,21 +37,20 @@ export default class App extends React.Component {
 		this.windowId = result.window.id;
 	});
 
-	overwolf.settings.registerHotKey("toggle_clickthrough", (status) =>{
-		console.log("hotkey pressed");
-		if (status === "success") {
-			console.log("hotkey success");
-      this.setState({clickthrough: !this.state.clickthrough})
-			if(this.state.clickthrough) {
-				overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
+	overwolf.settings.registerHotKey("toggle_clickthrough", (result) => {
+		if (result.status === "success") {
+			if (this.state.clickthrough) {
+				overwolf.windows.removeWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
 					console.log("disabled clickthrough");
+					this.myCanvas.setState({isDrawable: true});
 				});
-			}else {
-				overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, () => {
+			} else {
+				overwolf.windows.setWindowStyle(this.windowId, overwolf.windows.enums.WindowStyle.InputPassThrough, (result) => {
 					console.log("enabled clickthrough");
+					this.myCanvas.setState({isDrawable: false});
 				});
-      }
-      this.setState({clickthrough: !this.state.clickthrough})
+      		}
+      		this.setState({clickthrough: !this.state.clickthrough})
 		}
 	});
   }
@@ -284,14 +283,14 @@ export default class App extends React.Component {
       timerHtml.push(<div key={key}>{this.state.timers[key]["name"]}: {minutes}:{seconds}</div>)
     }
     console.log("DRAWING TOOL: " + this.state.DrawingTool)
-    let myCanvas = this.userId ?
+    this.myCanvas = this.userId ?
       <DrawableCanvas
         initialDrawing={canvases[this.userId] || ""}
         onDrawingChanged={this.handleDrawingChanged}
         lineWidth={this.state.lineWidth}
         onMouseUp={this.handleMouseUp}
         drawingTool={this.state.drawingTool}
-        isDrawable={true}
+        isDrawable={!this.state.clickthrough}
         canvasStyle={{ zIndex: "1" }}
         brushColor={this.state.brushColor}
       /> :
@@ -301,7 +300,7 @@ export default class App extends React.Component {
     return (
       <div className="app">
         {this.formatButtons()}
-        {myCanvas}
+        {this.myCanvas}
         {this.formatOtherCanvases()}
         <div style={{"position": "absolute", "left": 854, "marginRight": "20px", "textAlign": "right"}}>
           {timerHtml}

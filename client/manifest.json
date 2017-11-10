@@ -26,7 +26,7 @@
 				"disable_rightclick": false,
 				"forcecapture": true,
 				"show_only_on_stream": false,
-				"ignore_keyboard_events": true,
+				"ignore_keyboard_events": false,
 				"in_game_only": false,
 				"disable_restore_animation": true,
 				"grab_keyboard_focus": false,
@@ -80,7 +80,7 @@
 			"toggle_clickthrough": {
 				"title": "Toggle Clickthrough",
 				"action-type": "custom",
-				"default": "Ctrl+F5"
+				"default": "F5"
 			}
 		}
 	}
