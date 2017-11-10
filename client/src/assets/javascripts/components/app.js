@@ -36,9 +36,6 @@ export default class App extends React.Component {
     gameTime: 0
   }
 
-
- 
-
   // Setup window
   overwolf.utils.getSystemInformation((systemInfo) => {
 	  for (let monitor of systemInfo.systemInfo.Monitors) {
