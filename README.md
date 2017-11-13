@@ -4,7 +4,7 @@ Parallel Convergence is a coaching tool which aims to improve the way coaches
 work with their League of Legends esports teams and was created during the 
 2017 Riot Games Hackathon hoste in Riot Games' headquarters in Los Angeles. 
 
-##Disclaimer
+## Disclaimer
 
 Parallel Convergence isn’t endorsed by Riot Games and doesn’t reflect 
 the views or opinions of Riot Games or anyone officially involved in producing 
