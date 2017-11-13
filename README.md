@@ -2,7 +2,7 @@
 
 Parallel Convergence is a coaching tool which aims to improve the way coaches 
 work with their League of Legends esports teams and was created during the 
-2017 Riot Games Hackathon hoste in Riot Games' headquarters in Los Angeles. 
+2017 Riot Games Hackathon hosted in Riot Games' headquarters in Los Angeles. 
 
 ## Disclaimer
 
@@ -19,8 +19,8 @@ Overwolf App.
 
 The synchronization guarantees that all persons look at the same event in game 
 with very low latency (far less than one second). Additionally, everyone is able to add 
-annotations (circles, arrows, free hand drawings), which are also synchronized between 
-clients, in real time. This enables effective communication between the participants of 
+annotations (circles, arrows, free hand drawings), which are also synchronized in real time between 
+clients. This enables effective communication between the participants of 
 a coaching session.
 
 ## Acknowledgements
